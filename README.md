@@ -1,4 +1,4 @@
-# World Monitor
+# CHANAKYA - built by Ajnav labs (Santhosh P)
 
 **Real-time global intelligence dashboard** — AI-powered news aggregation, geopolitical monitoring, and infrastructure tracking in a unified situational awareness interface.
 
@@ -10,28 +10,28 @@
 [![Latest release](https://img.shields.io/github/v/release/dast-santhosh/chanakya?style=flat)](https://github.com/dast-santhosh/chanakya/releases/latest)
 
 <p align="center">
-  <a href="https://worldmonitor.app"><img src="https://img.shields.io/badge/Web_App-worldmonitor.app-blue?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Web App"></a>&nbsp;
-  <a href="https://tech.worldmonitor.app"><img src="https://img.shields.io/badge/Tech_Variant-tech.worldmonitor.app-0891b2?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Tech Variant"></a>&nbsp;
-  <a href="https://finance.worldmonitor.app"><img src="https://img.shields.io/badge/Finance_Variant-finance.worldmonitor.app-059669?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Finance Variant"></a>&nbsp;
-  <a href="https://commodity.worldmonitor.app"><img src="https://img.shields.io/badge/Commodity_Variant-commodity.worldmonitor.app-b45309?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Commodity Variant"></a>&nbsp;
-  <a href="https://happy.worldmonitor.app"><img src="https://img.shields.io/badge/Happy_Variant-happy.worldmonitor.app-f59e0b?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Happy Variant"></a>&nbsp;
-  <a href="https://energy.worldmonitor.app"><img src="https://img.shields.io/badge/Energy_Variant-energy.worldmonitor.app-eab308?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Energy Variant"></a>
+  <a href="https://chanakya-pi.vercel.app"><img src="https://img.shields.io/badge/Web_App-chanakya-pi.vercel.app-blue?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Web App"></a>&nbsp;
+  <a href="https://tech.chanakya-pi.vercel.app"><img src="https://img.shields.io/badge/Tech_Variant-tech.chanakya-pi.vercel.app-0891b2?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Tech Variant"></a>&nbsp;
+  <a href="https://finance.chanakya-pi.vercel.app"><img src="https://img.shields.io/badge/Finance_Variant-finance.chanakya-pi.vercel.app-059669?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Finance Variant"></a>&nbsp;
+  <a href="https://commodity.chanakya-pi.vercel.app"><img src="https://img.shields.io/badge/Commodity_Variant-commodity.chanakya-pi.vercel.app-b45309?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Commodity Variant"></a>&nbsp;
+  <a href="https://happy.chanakya-pi.vercel.app"><img src="https://img.shields.io/badge/Happy_Variant-happy.chanakya-pi.vercel.app-f59e0b?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Happy Variant"></a>&nbsp;
+  <a href="https://energy.chanakya-pi.vercel.app"><img src="https://img.shields.io/badge/Energy_Variant-energy.chanakya-pi.vercel.app-eab308?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Energy Variant"></a>
 </p>
 
 <p align="center">
-  <a href="https://worldmonitor.app/api/download?platform=windows-exe"><img src="https://img.shields.io/badge/Download-Windows_(.exe)-0078D4?style=for-the-badge&logo=windows&logoColor=white" alt="Download Windows"></a>&nbsp;
-  <a href="https://worldmonitor.app/api/download?platform=macos-arm64"><img src="https://img.shields.io/badge/Download-macOS_Apple_Silicon-000000?style=for-the-badge&logo=apple&logoColor=white" alt="Download macOS ARM"></a>&nbsp;
-  <a href="https://worldmonitor.app/api/download?platform=macos-x64"><img src="https://img.shields.io/badge/Download-macOS_Intel-555555?style=for-the-badge&logo=apple&logoColor=white" alt="Download macOS Intel"></a>&nbsp;
-  <a href="https://worldmonitor.app/api/download?platform=linux-appimage"><img src="https://img.shields.io/badge/Download-Linux_(.AppImage)-FCC624?style=for-the-badge&logo=linux&logoColor=black" alt="Download Linux"></a>
+  <a href="https://chanakya-pi.vercel.app/api/download?platform=windows-exe"><img src="https://img.shields.io/badge/Download-Windows_(.exe)-0078D4?style=for-the-badge&logo=windows&logoColor=white" alt="Download Windows"></a>&nbsp;
+  <a href="https://chanakya-pi.vercel.app/api/download?platform=macos-arm64"><img src="https://img.shields.io/badge/Download-macOS_Apple_Silicon-000000?style=for-the-badge&logo=apple&logoColor=white" alt="Download macOS ARM"></a>&nbsp;
+  <a href="https://chanakya-pi.vercel.app/api/download?platform=macos-x64"><img src="https://img.shields.io/badge/Download-macOS_Intel-555555?style=for-the-badge&logo=apple&logoColor=white" alt="Download macOS Intel"></a>&nbsp;
+  <a href="https://chanakya-pi.vercel.app/api/download?platform=linux-appimage"><img src="https://img.shields.io/badge/Download-Linux_(.AppImage)-FCC624?style=for-the-badge&logo=linux&logoColor=black" alt="Download Linux"></a>
 </p>
 
 <p align="center">
-  <a href="https://www.worldmonitor.app/docs/documentation"><strong>Documentation</strong></a> &nbsp;·&nbsp;
+  <a href="https://chanakya-pi.vercel.app/docs/documentation"><strong>Documentation</strong></a> &nbsp;·&nbsp;
   <a href="https://github.com/dast-santhosh/chanakya/releases/latest"><strong>Releases</strong></a> &nbsp;·&nbsp;
-  <a href="https://www.worldmonitor.app/docs/contributing"><strong>Contributing</strong></a>
+  <a href="https://chanakya-pi.vercel.app/docs/contributing"><strong>Contributing</strong></a>
 </p>
 
-![World Monitor Dashboard](docs/images/worldmonitor-7-mar-2026.jpg)
+![Chanakya Dashboard](docs/images/worldmonitor-7-mar-2026.jpg)
 
 ---
 
@@ -47,7 +47,7 @@
 - **Native desktop app** (Tauri 2) for macOS, Windows, and Linux
 - **23 languages** with native-language feeds and RTL support
 
-For the full feature list, architecture, data sources, and algorithms, see the **[documentation](https://www.worldmonitor.app/docs/documentation)**.
+For the full feature list, architecture, data sources, and algorithms, see the **[documentation](https://chanakya-pi.vercel.app/docs/documentation)**.
 
 ---
 
@@ -57,7 +57,7 @@ All site variants and desktop binaries are built from a single codebase and ship
 
 | Surface | Status | Notes |
 |---------|--------|-------|
-| `worldmonitor.app`, `tech.`, `finance.`, `commodity.`, `happy.`, `energy.` | Stable | Public deployments built from this repo, actively maintained |
+| `chanakya-pi.vercel.app`, `tech.`, `finance.`, `commodity.`, `happy.`, `energy.` | Stable | Public deployments built from this repo, actively maintained |
 | Desktop binaries (Windows / macOS Apple Silicon / macOS Intel / Linux AppImage) | Stable | One Tauri binary that switches variants in-app; current CI release targets are `full` and `tech` |
 
 Issues filed against any of the above are triaged from the same backlog — see the [issues board](https://github.com/dast-santhosh/chanakya/issues) for currently-open work.
@@ -80,13 +80,13 @@ Feature-specific data sources may require credentials — for example, the fligh
 For variant-specific development:
 
 ```bash
-npm run dev:tech       # tech.worldmonitor.app
-npm run dev:finance    # finance.worldmonitor.app
-npm run dev:commodity  # commodity.worldmonitor.app
-npm run dev:happy      # happy.worldmonitor.app
+npm run dev:tech       # tech.chanakya-pi.vercel.app
+npm run dev:finance    # finance.chanakya-pi.vercel.app
+npm run dev:commodity  # commodity.chanakya-pi.vercel.app
+npm run dev:happy      # happy.chanakya-pi.vercel.app
 ```
 
-See the **[self-hosting guide](https://www.worldmonitor.app/docs/getting-started)** for deployment options (Vercel, Docker, static).
+See the **[self-hosting guide](https://chanakya-pi.vercel.app/docs/getting-started)** for deployment options (Vercel, Docker, static).
 
 ---
 
@@ -101,7 +101,7 @@ See the **[self-hosting guide](https://www.worldmonitor.app/docs/getting-started
 | **Deployment** | Vercel Edge Functions (60+), Railway relay, Tauri, PWA |
 | **Caching** | Redis (Upstash), 3-tier cache, CDN, service worker |
 
-Full stack details in the **[architecture docs](https://www.worldmonitor.app/docs/architecture)**.
+Full stack details in the **[architecture docs](https://chanakya-pi.vercel.app/docs/architecture)**.
 
 ---
 
@@ -113,7 +113,7 @@ Flight data provided gracefully by [Wingbits](https://wingbits.com?utm_source=wo
 
 ## Data Sources
 
-WorldMonitor aggregates 65+ external providers and APIs across geopolitics, finance, energy, climate, aviation, cyber, military, infrastructure, and news intelligence — surfaced through 500+ curated feeds and tracked by a freshness monitor covering 35 source groups. See the full [data sources catalog](https://www.worldmonitor.app/docs/data-sources) for providers, feed tiers, and collection methods.
+Chanakya aggregates 65+ external providers and APIs across geopolitics, finance, energy, climate, aviation, cyber, military, infrastructure, and news intelligence — surfaced through 500+ curated feeds and tracked by a freshness monitor covering 35 source groups. See the full [data sources catalog](https://chanakya-pi.vercel.app/docs/data-sources) for providers, feed tiers, and collection methods.
 
 ---
 
@@ -148,7 +148,7 @@ Copyright (C) 2024-2026 Ajnav Labs. All rights reserved.
 
 ## Author
 
-**Ajnav Labs** — [ajnav.com](https://ajnav.com)
+**Ajnav Labs (Santhosh P)** — [ajnav.com](https://ajnav.com)
 
 ## Security Acknowledgments
 
@@ -161,10 +161,10 @@ See our [Security Policy](./SECURITY.md) for responsible disclosure guidelines.
 ---
 
 <p align="center">
-  <a href="https://worldmonitor.app">worldmonitor.app</a> &nbsp;·&nbsp;
-  <a href="https://www.worldmonitor.app/docs/documentation">docs.worldmonitor.app</a> &nbsp;·&nbsp;
-  <a href="https://finance.worldmonitor.app">finance.worldmonitor.app</a> &nbsp;·&nbsp;
-  <a href="https://commodity.worldmonitor.app">commodity.worldmonitor.app</a>
+  <a href="https://chanakya-pi.vercel.app">chanakya-pi.vercel.app</a> &nbsp;·&nbsp;
+  <a href="https://chanakya-pi.vercel.app/docs/documentation">docs.chanakya-pi.vercel.app</a> &nbsp;·&nbsp;
+  <a href="https://finance.chanakya-pi.vercel.app">finance.chanakya-pi.vercel.app</a> &nbsp;·&nbsp;
+  <a href="https://commodity.chanakya-pi.vercel.app">commodity.chanakya-pi.vercel.app</a>
 </p>
 
 ## Star History
@@ -175,5 +175,6 @@ See our [Security Policy](./SECURITY.md) for responsible disclosure guidelines.
    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=dast-santhosh/chanakya&type=Date&type=Date" />
  </picture>
 </a>
-#   c h a n a k y a  
+#   c h a n a k y a 
+ 
  
