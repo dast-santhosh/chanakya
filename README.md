@@ -2,29 +2,6 @@
 
 **Real-time global intelligence dashboard** — AI-powered news aggregation, geopolitical monitoring, and infrastructure tracking in a unified situational awareness interface.
 
-[![GitHub stars](https://img.shields.io/github/stars/dast-santhosh/chanakya?style=social)](https://github.com/dast-santhosh/chanakya/stargazers)
-[![Discord](https://img.shields.io/badge/Discord-Join-5865F2?style=flat&logo=discord&logoColor=white)](https://discord.gg/re63kWKxaz)
-[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
-[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Last commit](https://img.shields.io/github/last-commit/dast-santhosh/chanakya)](https://github.com/dast-santhosh/chanakya/commits/main)
-[![Latest release](https://img.shields.io/github/v/release/dast-santhosh/chanakya?style=flat)](https://github.com/dast-santhosh/chanakya/releases/latest)
-
-<p align="center">
-  <a href="https://chanakya-pi.vercel.app"><img src="https://img.shields.io/badge/Web_App-chanakya-pi.vercel.app-blue?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Web App"></a>&nbsp;
-  <a href="https://tech.chanakya-pi.vercel.app"><img src="https://img.shields.io/badge/Tech_Variant-tech.chanakya-pi.vercel.app-0891b2?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Tech Variant"></a>&nbsp;
-  <a href="https://finance.chanakya-pi.vercel.app"><img src="https://img.shields.io/badge/Finance_Variant-finance.chanakya-pi.vercel.app-059669?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Finance Variant"></a>&nbsp;
-  <a href="https://commodity.chanakya-pi.vercel.app"><img src="https://img.shields.io/badge/Commodity_Variant-commodity.chanakya-pi.vercel.app-b45309?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Commodity Variant"></a>&nbsp;
-  <a href="https://happy.chanakya-pi.vercel.app"><img src="https://img.shields.io/badge/Happy_Variant-happy.chanakya-pi.vercel.app-f59e0b?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Happy Variant"></a>&nbsp;
-  <a href="https://energy.chanakya-pi.vercel.app"><img src="https://img.shields.io/badge/Energy_Variant-energy.chanakya-pi.vercel.app-eab308?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Energy Variant"></a>
-</p>
-
-<p align="center">
-  <a href="https://chanakya-pi.vercel.app/docs/documentation"><strong>Documentation</strong></a> &nbsp;·&nbsp;
-  <a href="https://github.com/dast-santhosh/chanakya/releases/latest"><strong>Releases</strong></a> &nbsp;·&nbsp;
-  <a href="https://chanakya-pi.vercel.app/docs/contributing"><strong>Contributing</strong></a>
-</p>
-
-
 ---
 
 ## What It Does
@@ -151,22 +128,3 @@ We thank the following researchers for responsibly disclosing security issues:
 See our [Security Policy](./SECURITY.md) for responsible disclosure guidelines.
 
 ---
-
-<p align="center">
-  <a href="https://chanakya-pi.vercel.app">chanakya-pi.vercel.app</a> &nbsp;·&nbsp;
-  <a href="https://chanakya-pi.vercel.app/docs/documentation">docs.chanakya-pi.vercel.app</a> &nbsp;·&nbsp;
-  <a href="https://finance.chanakya-pi.vercel.app">finance.chanakya-pi.vercel.app</a> &nbsp;·&nbsp;
-  <a href="https://commodity.chanakya-pi.vercel.app">commodity.chanakya-pi.vercel.app</a>
-</p>
-
-## Star History
-
-<a href="https://api.star-history.com/svg?repos=dast-santhosh/chanakya&type=Date">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=dast-santhosh/chanakya&type=Date&type=Date&theme=dark" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=dast-santhosh/chanakya&type=Date&type=Date" />
- </picture>
-</a>
-#   c h a n a k y a 
- 
- 
