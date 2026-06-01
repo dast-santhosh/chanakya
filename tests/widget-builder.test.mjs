@@ -762,11 +762,11 @@ describe('proxy routing — widgetAgentUrl', () => {
     );
   });
 
-  it('widgetAgentUrl targets proxy.worldmonitor.app (not toRuntimeUrl)', () => {
+  it('widgetAgentUrl targets proxy.ajnav.com (not toRuntimeUrl)', () => {
     // The URL may be in a constant above the function; search the whole file
     assert.ok(
-      proxy.includes('proxy.worldmonitor.app'),
-      'Must target proxy.worldmonitor.app directly (sidecar destroys SSE via arrayBuffer)',
+      proxy.includes('proxy.ajnav.com'),
+      'Must target proxy.ajnav.com directly (sidecar destroys SSE via arrayBuffer)',
     );
     // Verify the function itself does not use toRuntimeUrl
     const fnIdx = proxy.indexOf('function widgetAgentUrl');
@@ -778,14 +778,14 @@ describe('proxy routing — widgetAgentUrl', () => {
     );
   });
 
-  it('vite.config.ts proxies /widget-agent to proxy.worldmonitor.app', () => {
+  it('vite.config.ts proxies /widget-agent to proxy.ajnav.com', () => {
     assert.ok(
       vite.includes('/widget-agent'),
       'vite.config.ts must have proxy entry for /widget-agent',
     );
     assert.ok(
-      vite.includes('proxy.worldmonitor.app'),
-      'Vite proxy target must be proxy.worldmonitor.app',
+      vite.includes('proxy.ajnav.com'),
+      'Vite proxy target must be proxy.ajnav.com',
     );
   });
 
@@ -1269,13 +1269,13 @@ describe('PRO widget — store and sanitizer', () => {
 
   it('widget sandbox allows approved Vercel previews and rejects lookalike origins', () => {
     assert.ok(
-      sandbox.includes("url.hostname === 'worldmonitor.app'")
-        && sandbox.includes("url.hostname.endsWith('.worldmonitor.app')"),
-      'sandbox must parse hostname and allow the worldmonitor.app apex/subdomains only',
+      sandbox.includes("url.hostname === 'ajnav.com'")
+        && sandbox.includes("url.hostname.endsWith('.ajnav.com')"),
+      'sandbox must parse hostname and allow the ajnav.com apex/subdomains only',
     );
     assert.ok(
-      !sandbox.includes("endsWith('worldmonitor.app')") && !sandbox.includes('endsWith("worldmonitor.app")'),
-      'sandbox must not use raw suffix checks that allow evilworldmonitor.app',
+      !sandbox.includes("endsWith('ajnav.com')") && !sandbox.includes('endsWith("ajnav.com")'),
+      'sandbox must not use raw suffix checks that allow evilajnav.com',
     );
     // The sandbox must source allowed Vercel team slugs from a single named
     // list — keeps the security invariant (team-slug gating) visible and
@@ -1317,7 +1317,7 @@ describe('PRO widget — store and sanitizer', () => {
   });
 
   it('widget sandbox behavior accepts Vercel previews and blocks spoofed parents', () => {
-    const script = sandbox.match(/<script>\n([\s\S]*)\n<\/script>/)?.[1];
+    const script = sandbox.match(/<script>\r?\n([\s\S]*)\r?\n<\/script>/)?.[1];
     assert.ok(script, 'sandbox inline script not found');
 
     function runSandbox(referrer) {

@@ -42,7 +42,7 @@ export function h(
 }
 
 export function text(value: string): Text {
-  return document.createTextNode(value);
+  return document.createTextNode(stripEmojis(value));
 }
 
 export function fragment(...children: DomChild[]): DocumentFragment {
@@ -62,11 +62,16 @@ export function replaceChildren(el: Element, ...children: DomChild[]): void {
   el.appendChild(frag);
 }
 
+export function stripEmojis(str: string): string {
+  if (!str) return str;
+  return str.replace(/[\u{1F300}-\u{1FAFF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F1E6}-\u{1F1FF}]/gu, '');
+}
+
 export function trustedHtml(html: string, reason: string): TrustedHtml {
   if (!reason.trim()) {
     throw new Error('trustedHtml() requires an audit reason');
   }
-  return html as TrustedHtml;
+  return stripEmojis(html) as TrustedHtml;
 }
 
 export function setTrustedHtml(el: Element, html: TrustedHtml): void {
@@ -189,7 +194,7 @@ function appendChildren(
     if (child instanceof Node) {
       parent.appendChild(child);
     } else {
-      parent.appendChild(document.createTextNode(String(child)));
+      parent.appendChild(document.createTextNode(stripEmojis(String(child))));
     }
   }
 }

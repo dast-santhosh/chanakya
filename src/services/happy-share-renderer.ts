@@ -172,11 +172,11 @@ export async function renderHappyShareCard(item: NewsItem): Promise<HTMLCanvasEl
   const brandY = SIZE - 120;
   ctx.font = '700 28px Nunito, system-ui, sans-serif';
   ctx.fillStyle = '#C4A35A'; // gold
-  ctx.fillText('\u2600 HappyMonitor', PAD, brandY); // sun emoji (Unicode escape)
+  ctx.fillText('Happy Monitor', PAD, brandY);
 
   ctx.font = '400 22px Nunito, system-ui, sans-serif';
   ctx.fillStyle = '#A0AEC0';
-  ctx.fillText('happy.worldmonitor.app', PAD, brandY + 34);
+  ctx.fillText('happy.ajnav.com', PAD, brandY + 34);
 
   return canvas;
 }

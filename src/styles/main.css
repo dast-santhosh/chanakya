@@ -7,66 +7,64 @@
    ============================================================ */
 :root {
   /* Backgrounds */
-  --bg: #0a0a0a;
-  --bg-secondary: #111;
-  --surface: #141414;
-  --surface-hover: #1e1e1e;
-  --surface-active: #1a1a2e;
+  --bg: #141414;
+  --bg-secondary: #181818;
+  --surface: #1c1c1c;
+  --surface-hover: #242424;
+  --surface-active: #2c2c2c;
 
   /* Borders */
-  --border: #2a2a2a;
-  --border-strong: #444;
-  --border-subtle: #1a1a1a;
+  --border: #2d2d2d;
+  --border-strong: #404040;
+  --border-subtle: #222222;
 
   /* Text */
-  --text: #e8e8e8;
-  --text-secondary: #ccc;
-  --text-dim: #888;
-  --text-muted: #666;
-  --text-faint: #555;
-  --text-ghost: #444;
-  --accent: #fff;
+  --text: #e0e0e0;
+  --text-secondary: #b0b0b0;
+  --text-dim: #808080;
+  --text-muted: #606060;
+  --text-faint: #444444;
+  --text-ghost: #303030;
+  --accent: #b0b0b0;
 
   /* Overlays & shadows */
-  --overlay-subtle: rgba(255, 255, 255, 0.03);
-  --overlay-light: rgba(255, 255, 255, 0.05);
-  --overlay-medium: rgba(255, 255, 255, 0.1);
-  --overlay-heavy: rgba(255, 255, 255, 0.2);
-  --shadow-color: rgba(0, 0, 0, 0.5);
+  --overlay-subtle: rgba(255, 255, 255, 0.01);
+  --overlay-light: rgba(255, 255, 255, 0.02);
+  --overlay-medium: rgba(255, 255, 255, 0.04);
+  --overlay-heavy: rgba(255, 255, 255, 0.06);
+  --shadow-color: rgba(0, 0, 0, 0.8);
   --darken-light: rgba(0, 0, 0, 0.15);
   --darken-medium: rgba(0, 0, 0, 0.2);
   --darken-heavy: rgba(0, 0, 0, 0.3);
 
   /* Scrollbar */
-  --scrollbar-thumb: #333;
-  --scrollbar-thumb-hover: #555;
+  --scrollbar-thumb: #2d2d2d;
+  --scrollbar-thumb-hover: #404040;
 
   /* Input */
-  --input-bg: #1a1a1a;
+  --input-bg: #181818;
 
   /* Panels */
-  --panel-bg: #141414;
-  --panel-border: #2a2a2a;
+  --panel-bg: #1c1c1c;
+  --panel-border: #2d2d2d;
 
   /* Map */
-  --map-bg: #020a08;
-  --map-grid: #0a2a20;
-  --map-country: #0a2018;
-  --map-stroke: #0f5040;
-
+  --map-bg: #121212;
+  --map-grid: #222222;
+  --map-country: #1a1a1a;
+  --map-stroke: #2a2a2a;
   /* Font stack */
   --font-mono: 'SF Mono', 'Monaco', 'Cascadia Code', 'Fira Code', 'DejaVu Sans Mono', 'Liberation Mono', monospace;
   /* Base body font, controlled by font preference (mono vs system) */
-  --font-body-base: var(--font-mono);
+  --font-body-base: 'Calibri', 'Arial', sans-serif;
   /* Effective body font used throughout the app */
   --font-body: var(--font-body-base);
 }
 
 /* System font selection via data-font attribute (avoids inline style specificity issues with RTL) */
 [data-font="system"] {
-  --font-body-base: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-body-base: 'Calibri', 'Arial', sans-serif;
 }
-
 [dir="rtl"] {
   --font-body: 'Tajawal', 'Geeza Pro', 'SF Arabic', 'Tahoma', var(--font-body-base);
 }
@@ -81,37 +79,37 @@
    ============================================================ */
 :root {
   /* Severity levels */
-  --semantic-critical: #ff4444;
-  --semantic-high: #ff8800;
-  --semantic-elevated: #ffaa00;
-  --semantic-normal: #44aa44;
-  --semantic-low: #3388ff;
-  --semantic-info: #3b82f6;
-  --semantic-positive: #44ff88;
+  --semantic-critical: #aa3a3a;
+  --semantic-high: #c67a33;
+  --semantic-elevated: #d1a13b;
+  --semantic-normal: #4a7856;
+  --semantic-low: #4a6878;
+  --semantic-info: #555b60;
+  --semantic-positive: #4a7856;
 
   /* Threat levels */
-  --threat-critical: #ef4444;
-  --threat-high: #f97316;
-  --threat-medium: #eab308;
-  --threat-low: #22c55e;
-  --threat-info: #3b82f6;
+  --threat-critical: #aa3a3a;
+  --threat-high: #c67a33;
+  --threat-medium: #d1a13b;
+  --threat-low: #4a7856;
+  --threat-info: #555b60;
 
   /* DEFCON levels */
-  --defcon-1: #ff0040;
-  --defcon-2: #ff4400;
-  --defcon-3: #ffaa00;
-  --defcon-4: #00aaff;
-  --defcon-5: #2d8a6e;
+  --defcon-1: #aa3a3a;
+  --defcon-2: #c67a33;
+  --defcon-3: #d1a13b;
+  --defcon-4: #4a6878;
+  --defcon-5: #555b60;
 
   /* Status indicators */
-  --status-live: #44ff88;
-  --status-cached: #ffaa00;
-  --status-unavailable: #ff4444;
+  --status-live: #4a7856;
+  --status-cached: #d1a13b;
+  --status-unavailable: #aa3a3a;
 
   /* Legacy color aliases (used by existing var() references) */
-  --red: #ff4444;
-  --green: #44ff88;
-  --yellow: #ffaa00;
+  --red: #aa3a3a;
+  --green: #4a7856;
+  --yellow: #d1a13b;
 }
 
 /* ============================================================
@@ -23786,3 +23784,1507 @@ body.map-width-resizing {
   align-items: center;
   margin-left: 6px;
 }
+
+/* ===========================================================================
+   NEUMORPHIC & VERTICAL SIDEBAR LAYOUT OVERRIDES (Military Grade)
+   =========================================================================== */
+
+/* Remove glows and pulses globally */
+* {
+  text-shadow: none !important;
+  box-shadow: none; /* We override with flat or neumorphic shadow values selectively */
+}
+
+/* Remove glow animations, dropshadows, filter drop-shadows across all components */
+.pulse, .pulseStyle, .satellite-pulse, .glowing, .glow {
+  animation: none !important;
+  filter: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+/* Eliminate layer toggle logos/emojis inside DeckGLMap and GlobeMap toggles */
+.toggle-icon {
+  display: none !important;
+}
+
+/* Desktop layout: Left vertical Sidebar and Neumorphic Panels Grid */
+@media (min-width: 769px) {
+  /* Override main container layout to be a left-sidebar + right main grid */
+  #app {
+    display: grid !important;
+    grid-template-columns: 280px 1fr !important;
+    grid-template-rows: 44px 1fr !important;
+    grid-template-areas:
+      "sidebar tabbar"
+      "sidebar viewport" !important;
+    height: 100vh !important;
+    width: 100vw !important;
+    overflow: hidden !important;
+    background: #0d0f14 !important;
+  }
+
+  /* Left vertical Sidebar style */
+  .header {
+    grid-area: sidebar !important;
+    width: 280px !important;
+    height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    padding: 24px 20px !important;
+    border-right: 1px solid #1c202a !important;
+    border-bottom: none !important;
+    background: #11141b !important;
+    overflow-y: auto !important;
+    z-index: 100 !important;
+    gap: 20px !important;
+    box-shadow: 6px 0 18px rgba(0, 0, 0, 0.45) !important;
+  }
+
+  /* Vertically stack elements inside sidebar sections */
+  .header-left {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 16px !important;
+    width: 100% !important;
+  }
+
+  .header-right {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+    width: 100% !important;
+    margin-top: auto !important;
+    border-top: 1px solid #1c202a !important;
+    padding-top: 20px !important;
+  }
+
+  /* Hamburger button is redundant in desktop sidebar mode */
+  .hamburger-btn {
+    display: none !important;
+  }
+
+  /* Branding / Logo elements */
+  .logo {
+    font-size: 20px !important;
+    font-weight: 800 !important;
+    letter-spacing: 4px !important;
+    color: #e2e8f0 !important;
+    display: block !important;
+    margin-bottom: 4px !important;
+    text-shadow: none !important;
+  }
+
+  .logo-mobile {
+    display: none !important;
+  }
+
+  .version {
+    font-size: 10px !important;
+    color: #64748b !important;
+    margin-left: 0 !important;
+    display: inline-block !important;
+  }
+
+  .credit-link {
+    font-size: 11px !important;
+    color: #3b82f6 !important;
+    text-decoration: none !important;
+    margin-bottom: 8px !important;
+    font-weight: 600 !important;
+  }
+
+  .credit-link:hover {
+    color: #60a5fa !important;
+  }
+
+  /* Live status indicator */
+  .status-indicator {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 6px 12px !important;
+    background: #141822 !important;
+    border: 1px solid #1c202a !important;
+    border-radius: 8px !important;
+    width: flex-start !important;
+    align-self: flex-start !important;
+    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  /* Region Selector wrapper and select element */
+  .region-selector {
+    width: 100% !important;
+    margin-top: 4px !important;
+  }
+
+  .region-select {
+    width: 100% !important;
+    height: 38px !important;
+    border-radius: 8px !important;
+    padding: 0 12px !important;
+    background: #141822 !important;
+    border: 1px solid #1c202a !important;
+    color: #94a3b8 !important;
+    font-weight: 600 !important;
+    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.5) !important;
+    outline: none !important;
+    cursor: pointer !important;
+  }
+
+  /* Vertical Variant Switcher */
+  .variant-switcher {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+    width: 100% !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .variant-divider {
+    display: none !important;
+  }
+
+  /* Vertical Variant Options - Flat clean styling matching portrait mobile sidebar feel */
+  .variant-option {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 14px 20px !important;
+    border-radius: 8px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    background: transparent !important;
+    border: none !important;
+    color: #94a3b8 !important;
+    box-shadow: none !important; /* Flat list, no neumorphic card shadow */
+    font-weight: 500 !important;
+    font-size: 14px !important;
+    text-transform: none !important; /* Title-case exactly like slide-out menu */
+    letter-spacing: normal !important;
+    cursor: pointer !important;
+    text-decoration: none !important;
+    min-height: 44px !important;
+    transition: background 0.15s ease, color 0.15s ease !important;
+  }
+
+  .variant-option .variant-label {
+    max-width: none !important;
+    opacity: 1 !important;
+    overflow: visible !important;
+    transition: none !important;
+  }
+
+  .variant-option .variant-icon {
+    font-size: 16px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    filter: none !important;
+  }
+
+  /* Hover states matching flat menu feel */
+  .variant-option:hover {
+    color: #f1f5f9 !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+
+  /* Active states with variant-specific premium tint backgrounds */
+  .variant-option.active {
+    pointer-events: none !important;
+    box-shadow: none !important;
+  }
+
+  /* All variant switcher icons must be crisp white in all states */
+  .variant-option .variant-icon svg {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+    opacity: 0.65 !important; /* Premium muted white for inactive */
+    transition: opacity 0.15s ease !important;
+  }
+  
+  .variant-option:hover .variant-icon svg,
+  .variant-option.active .variant-icon svg {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+    opacity: 1 !important; /* Full crisp white on hover/active */
+  }
+
+  /* Variant-specific active text colors and highlight backgrounds */
+  .variant-option[data-variant="full"].active {
+    color: #38bdf8 !important;
+    background: rgba(56, 189, 248, 0.06) !important;
+  }
+
+  .variant-option[data-variant="tech"].active {
+    color: #a855f7 !important;
+    background: rgba(168, 85, 247, 0.06) !important;
+  }
+
+  .variant-option[data-variant="finance"].active {
+    color: #10b981 !important;
+    background: rgba(16, 185, 129, 0.06) !important;
+  }
+
+  .variant-option[data-variant="commodity"].active {
+    color: #f59e0b !important;
+    background: rgba(245, 158, 11, 0.06) !important;
+  }
+
+  .variant-option[data-variant="energy"].active {
+    color: #f97316 !important;
+    background: rgba(249, 115, 22, 0.06) !important;
+  }
+
+  .variant-option[data-variant="happy"].active {
+    color: #ec4899 !important;
+    background: rgba(236, 72, 153, 0.06) !important;
+  }
+
+  /* Right Side elements of Sidebar: Search, copy, settings, full width */
+  .search-btn, .copy-link-btn, .fullscreen-btn, .tv-mode-btn {
+    width: 100% !important;
+    height: 44px !important;
+    border-radius: 8px !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    display: flex !important;
+    gap: 12px !important;
+    padding: 14px 20px !important;
+    background: none !important;
+    border: none !important;
+    color: #94a3b8 !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    box-shadow: none !important;
+    transition: all 0.15s ease !important;
+  }
+
+  .search-btn:hover, .copy-link-btn:hover, .fullscreen-btn:hover, .tv-mode-btn:hover {
+    color: #f1f5f9 !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    transform: none !important;
+  }
+
+  /* Auth Widget inside sidebar */
+  .auth-widget-mount {
+    width: 100% !important;
+    display: inline-flex !important;
+    justify-content: center !important;
+    padding-top: 4px !important;
+  }
+
+  /* Right-side main viewport */
+  .main-content {
+    grid-area: main !important;
+    height: 100vh !important;
+    overflow-y: auto !important;
+    background: #090b0e !important;
+    padding: 16px !important;
+    display: grid !important;
+    gap: 16px !important;
+  }
+
+  /* Footer Placement */
+  .site-footer {
+    grid-area: footer !important;
+    background: #090b0e !important;
+    border-top: 1px solid #1c202a !important;
+    height: 48px !important;
+    padding: 0 24px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    font-size: 11px !important;
+    color: #475569 !important;
+  }
+
+  /* Hide mobile-specific trigger elements */
+  .mobile-search-btn, .mobile-settings-btn {
+    display: none !important;
+  }
+}
+
+/* ===========================================================================
+   MILITARY GRADE TACTICAL NEUMORPHISM (Soft Rounded Corners, Inset/Outset Shadows)
+   =========================================================================== */
+
+/* Neumorphic Tactical Panels and Map Cards */
+.panel, .map-section {
+  background: #11141b !important;
+  border: 1px solid #1c202a !important;
+  border-radius: 14px !important; /* Soft, not spooky sharp edges */
+  box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.45), -3px -3px 12px rgba(255, 255, 255, 0.015) !important; /* Premium Neumorphic outset */
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Map dimension buttons */
+.map-dim-btn {
+  background: #141822 !important;
+  border: 1px solid #1c202a !important;
+  border-radius: 6px !important;
+  color: #94a3b8 !important;
+  font-weight: 600 !important;
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.4) !important;
+  cursor: pointer !important;
+}
+
+.map-dim-btn.active {
+  background: #0f121a !important;
+  box-shadow: inset 2px 2px 4px rgba(0,0,0,0.6) !important;
+  color: #f1f5f9 !important;
+  border-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+/* Soft Neumorphic Inputs & Buttons */
+input[type="text"], input[type="search"], select, button {
+  border-radius: 8px !important; /* Smooth professional corners */
+  text-shadow: none !important;
+}
+
+/* Custom Outset cards inside lists (like feed news items or position cards) */
+.pos-card, .news-item, .market-row, .advisory-card {
+  border-radius: 10px !important;
+  background: #141822 !important;
+  border: 1px solid #1c202a !important;
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3) !important;
+  margin-bottom: 8px !important;
+  transition: all 0.2s ease !important;
+}
+
+.pos-card:hover, .news-item:hover, .market-row:hover {
+  background: #181d2a !important;
+  box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.4) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Remove glow rings and focus highlights */
+input:focus, select:focus, button:focus {
+  outline: none !important;
+  border-color: #2e3648 !important;
+  box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* ===========================================================================
+   CUSTOM PREMIUM DARK SCROLLBAR OVERRIDES
+   =========================================================================== */
+::-webkit-scrollbar {
+  width: 6px !important;
+  height: 6px !important;
+}
+::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+::-webkit-scrollbar-thumb {
+  background: #232836 !important;
+  border-radius: 4px !important;
+  border: 1px solid rgba(255,255,255,0.02) !important;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3b82f6 !important;
+}
+body, div, nav, aside, section, article {
+  scrollbar-width: thin !important;
+  scrollbar-color: #232836 transparent !important;
+}
+
+/* ===========================================================================
+   RETRACTABLE SIDEBAR EXTRA OVERRIDES (Desktop)
+   =========================================================================== */
+@media (min-width: 769px) {
+  /* Logo and toggle container */
+  .logo-wrapper {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    padding-bottom: 14px !important;
+    border-bottom: 1px solid #1c202a !important;
+    margin-bottom: 20px !important;
+  }
+
+  .sidebar-toggle-btn {
+    appearance: none !important;
+    background: transparent !important;
+    border: none !important;
+    width: 44px !important;
+    height: 44px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+  .sidebar-toggle-btn:hover {
+    transform: scale(1.1) !important;
+  }
+  .sidebar-toggle-btn img {
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 50% !important;
+    display: block !important;
+  }
+
+  /* Transition app width when retracting sidebar */
+  #app {
+    transition: grid-template-columns 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  /* When collapsed, we hide texts, status indicators, and properly shrink layout width */
+  #app.sidebar-collapsed {
+    grid-template-columns: 78px 1fr !important;
+  }
+  #app.sidebar-collapsed .header {
+    width: 78px !important; /* Shortens the sidebar width */
+    padding: 24px 8px !important;
+    align-items: center !important;
+    overflow: hidden !important; /* Wipes out any leaking elements */
+  }
+  #app.sidebar-collapsed .logo-wrapper {
+    justify-content: center !important;
+    border-bottom: none !important;
+    margin-bottom: 24px !important;
+    padding-bottom: 0 !important;
+    width: 100% !important;
+  }
+  #app.sidebar-collapsed .logo-wrapper .logo,
+  #app.sidebar-collapsed .logo-wrapper .version,
+  #app.sidebar-collapsed .credit-link,
+  #app.sidebar-collapsed .mobile-settings-btn,
+  #app.sidebar-collapsed .status-indicator,
+  #app.sidebar-collapsed .region-selector,
+  #app.sidebar-collapsed .mobile-search-btn,
+  #app.sidebar-collapsed .header-right,
+  #app.sidebar-collapsed .variant-label {
+    display: none !important; /* Ensures NOTHING else is visible */
+  }
+
+  /* Symmetrical centering for variant switcher icons when retracted */
+  #app.sidebar-collapsed .variant-option {
+    justify-content: center !important;
+    padding: 14px 0 !important;
+  }
+}
+
+/* ===========================================================================
+   BROWSER-LIKE TACTICAL TAB SYSTEM STYLING
+   =========================================================================== */
+.tactical-tab-bar {
+  grid-area: tabbar !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  background: #11141b !important;
+  border-bottom: 1px solid #1c202a !important;
+  height: 44px !important;
+  padding-left: 12px !important;
+  gap: 4px !important;
+  z-index: 99 !important;
+}
+
+.tab-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 8px 16px !important;
+  height: 36px !important;
+  background: #141822 !important;
+  border: 1px solid #1c202a !important;
+  border-bottom: none !important;
+  border-radius: 8px 8px 0 0 !important;
+  color: #64748b !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  box-shadow: inset 0 -4px 8px rgba(0,0,0,0.3) !important;
+}
+
+.tab-item:hover {
+  color: #f1f5f9 !important;
+  background: #1b212f !important;
+}
+
+.tab-item.active {
+  color: #3b82f6 !important;
+  background: #090b0e !important;
+  border-color: #1c202a !important;
+  border-bottom: 1px solid #090b0e !important;
+  height: 38px !important;
+  box-shadow: none !important;
+  font-weight: 700 !important;
+}
+
+.tab-item svg {
+  flex-shrink: 0 !important;
+}
+
+.tactical-tab-viewport {
+  grid-area: viewport !important;
+  height: calc(100vh - 44px) !important;
+  width: 100% !important;
+  position: relative !important;
+  overflow: hidden !important;
+  background: #090b0e !important;
+}
+
+.tactical-tab-content {
+  display: none !important;
+  height: 100% !important;
+  width: 100% !important;
+  overflow-y: auto !important;
+  padding: 24px !important;
+}
+
+.tactical-tab-content.active {
+  display: block !important;
+}
+
+/* Home tab layout wrapper */
+#tab-home {
+  padding: 0 !important;
+  display: none !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  overflow: hidden !important;
+}
+#tab-home.active {
+  display: flex !important;
+}
+
+/* ===========================================================================
+   ENTERPRISE SECURITY WORKSPACES LAYOUTS
+   =========================================================================== */
+
+/* Spliscreen operation planner */
+.tactical-split-pane {
+  display: grid !important;
+  grid-template-columns: 1fr 1.2fr !important;
+  gap: 24px !important;
+  height: 100% !important;
+}
+
+.tactical-card {
+  background: #11141b !important;
+  border: 1px solid #1c202a !important;
+  border-radius: 12px !important;
+  padding: 20px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+  box-shadow: 4px 4px 10px rgba(0,0,0,0.5) !important;
+  overflow: hidden !important;
+}
+
+.tactical-card-title {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  letter-spacing: 1px !important;
+  color: #f1f5f9 !important;
+  text-transform: uppercase !important;
+  border-bottom: 1px solid #1c202a !important;
+  padding-bottom: 10px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.tactical-card-body {
+  flex: 1 !important;
+  overflow-y: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+}
+
+/* Forms styling inside panels */
+.tactical-field {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+}
+
+.tactical-field label {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: 1px !important;
+  color: #64748b !important;
+  text-transform: uppercase !important;
+}
+
+.tactical-input, .tactical-select, .tactical-textarea {
+  background: #141822 !important;
+  border: 1px solid #1c202a !important;
+  border-radius: 8px !important;
+  color: #f1f5f9 !important;
+  padding: 10px 12px !important;
+  font-family: inherit !important;
+  font-size: 11px !important;
+  outline: none !important;
+  box-shadow: inset 2px 2px 4px rgba(0,0,0,0.5) !important;
+}
+
+.tactical-textarea {
+  min-height: 120px !important;
+  resize: vertical !important;
+}
+
+.tactical-btn {
+  background: #1d4ed8 !important;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  border: 1px solid #3b82f6 !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 11px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+  padding: 12px 20px !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 3px 3px 8px rgba(0,0,0,0.4) !important;
+  text-align: center !important;
+}
+
+.tactical-btn:hover {
+  background: #2563eb !important;
+  transform: translateY(-1px) !important;
+}
+
+.tactical-btn--secondary {
+  background: #141822 !important;
+  border: 1px solid #1c202a !important;
+  color: #94a3b8 !important;
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.3) !important;
+}
+.tactical-btn--secondary:hover {
+  background: #1c202a !important;
+  color: #f1f5f9 !important;
+}
+
+/* Document preview styles */
+.tactical-doc-preview {
+  font-family: 'Courier New', Courier, monospace !important;
+  font-size: 11px !important;
+  line-height: 1.6 !important;
+  color: #10b981 !important; /* Green screen styling */
+  background: #090b0e !important;
+  border: 1px solid #1c202a !important;
+  border-radius: 8px !important;
+  padding: 16px !important;
+  box-shadow: inset 3px 3px 6px rgba(0,0,0,0.8) !important;
+  white-space: pre-wrap !important;
+  overflow-y: auto !important;
+}
+
+/* Geopolitical terminal chat styles */
+.terminal-chat-container {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  border-radius: 12px !important;
+  border: 1px solid #1c202a !important;
+  background: #11141b !important;
+  overflow: hidden !important;
+  box-shadow: 4px 4px 10px rgba(0,0,0,0.5) !important;
+}
+
+.terminal-header {
+  background: #141822 !important;
+  border-bottom: 1px solid #1c202a !important;
+  padding: 12px 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+.terminal-status {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: 1px !important;
+  color: #10b981 !important;
+  text-transform: uppercase !important;
+}
+
+.terminal-logs {
+  flex: 1 !important;
+  overflow-y: auto !important;
+  padding: 20px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+  background: #090b0e !important;
+}
+
+.terminal-row {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  max-width: 85% !important;
+  padding: 12px 16px !important;
+  border-radius: 10px !important;
+  font-family: inherit !important;
+  font-size: 11px !important;
+  line-height: 1.5 !important;
+}
+
+.terminal-row--agent {
+  background: #11141b !important;
+  border: 1px solid #1c202a !important;
+  color: #94a3b8 !important;
+  align-self: flex-start !important;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.3) !important;
+}
+
+.terminal-row--user {
+  background: #1d4ed8 !important;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  color: #ffffff !important;
+  align-self: flex-end !important;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.3) !important;
+}
+
+.terminal-input-bar {
+  background: #141822 !important;
+  border-top: 1px solid #1c202a !important;
+  padding: 16px 20px !important;
+  display: flex !important;
+  gap: 12px !important;
+  align-items: center !important;
+}
+
+.terminal-input-bar input {
+  flex: 1 !important;
+  background: #090b0e !important;
+  border: 1px solid #1c202a !important;
+  color: #f1f5f9 !important;
+  padding: 10px 14px !important;
+  outline: none !important;
+  font-size: 11px !important;
+  border-radius: 8px !important;
+  box-shadow: inset 1px 1px 3px rgba(0,0,0,0.5) !important;
+}
+
+.terminal-suggestions {
+  display: flex !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+  padding: 0 20px 12px !important;
+  background: #11141b !important;
+}
+
+.suggestion-chip {
+  background: #141822 !important;
+  border: 1px solid #1c202a !important;
+  border-radius: 12px !important;
+  padding: 4px 10px !important;
+  color: #64748b !important;
+  font-size: 9px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.suggestion-chip:hover {
+  border-color: #3b82f6 !important;
+  color: #3b82f6 !important;
+}
+
+/* OSINT harvester terminal scan log style */
+.harvester-console {
+  background: #090b0e !important;
+  border: 1px solid #1c202a !important;
+  border-radius: 8px !important;
+  padding: 16px !important;
+  font-family: 'Courier New', Courier, monospace !important;
+  font-size: 10px !important;
+  line-height: 1.5 !important;
+  color: #38bdf8 !important; /* Cyber blue */
+  min-height: 180px !important;
+  max-height: 240px !important;
+  overflow-y: auto !important;
+  box-shadow: inset 3px 3px 6px rgba(0,0,0,0.8) !important;
+}
+
+/* Repository spreadsheet-like table styles */
+.repository-toolbar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+  margin-bottom: 12px !important;
+}
+
+.tactical-table-container {
+  flex: 1 !important;
+  border: 1px solid #1c202a !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  background: #141822 !important;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.5) !important;
+}
+
+.tactical-table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  font-size: 11px !important;
+  text-align: left !important;
+}
+
+.tactical-table th {
+  background: #11141b !important;
+  border-bottom: 1px solid #1c202a !important;
+  color: #64748b !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  padding: 12px 16px !important;
+  letter-spacing: 0.5px !important;
+}
+
+.tactical-table td {
+  padding: 12px 16px !important;
+  border-bottom: 1px solid #1c202a !important;
+  color: #94a3b8 !important;
+}
+
+.tactical-table tr:hover td {
+  background: #1c202a !important;
+  color: #f1f5f9 !important;
+}
+
+.badge-threat {
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  font-size: 8px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.5px !important;
+  text-transform: uppercase !important;
+}
+.badge-threat--critical { background: rgba(239, 68, 68, 0.15) !important; border: 1px solid #ef4444 !important; color: #ef4444 !important; }
+.badge-threat--high { background: rgba(249, 115, 22, 0.15) !important; border: 1px solid #f97316 !important; color: #f97316 !important; }
+.badge-threat--medium { background: rgba(245, 158, 11, 0.15) !important; border: 1px solid #f59e0b !important; color: #f59e0b !important; }
+.badge-threat--low { background: rgba(16, 185, 129, 0.15) !important; border: 1px solid #10b981 !important; color: #10b981 !important; }
+
+
+/* ===========================================================================
+   GEMINI-LIKE FLOATING TACTICAL AI POPUP CHAT SYSTEM (Alt+P)
+   =========================================================================== */
+.ai-chat-popup-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: rgba(4, 6, 10, 0.75) !important;
+  backdrop-filter: blur(12px) !important;
+  z-index: 1000 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.ai-chat-popup-overlay.open {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+/* Glassmorphic container with centered dark blue radial vignette glow backdrop */
+.ai-chat-popup-container {
+  position: relative !important;
+  width: 90vw !important;
+  max-width: 820px !important;
+  height: 80vh !important;
+  max-height: 640px !important;
+  background: #11141b !important;
+  background: radial-gradient(circle at center, #172554 0%, #0d0f14 80%) !important; /* Centered blue glow backdrop */
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  transform: scale(0.95) !important;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+.ai-chat-popup-overlay.open .ai-chat-popup-container {
+  transform: scale(1) !important;
+}
+
+.ai-chat-popup-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 18px 24px !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
+}
+
+.ai-chat-popup-title-left {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+.ai-chat-popup-logo {
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 50% !important;
+}
+
+.ai-chat-popup-title-text {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: #f1f5f9 !important;
+  letter-spacing: 2px !important;
+}
+
+.ai-chat-popup-close-btn {
+  background: transparent !important;
+  border: none !important;
+  color: #64748b !important;
+  font-size: 20px !important;
+  cursor: pointer !important;
+  transition: color 0.15s ease !important;
+}
+
+.ai-chat-popup-close-btn:hover {
+  color: #ef4444 !important;
+}
+
+/* Gemini Center Greeting state */
+.ai-chat-popup-body {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow-y: auto !important;
+  padding: 24px !important;
+  gap: 20px !important;
+  scroll-behavior: smooth !important;
+}
+
+.ai-chat-popup-welcome-wrapper {
+  margin: auto !important;
+  text-align: center !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  max-width: 480px !important;
+  padding-bottom: 20px !important;
+}
+
+.ai-chat-popup-welcome-title {
+  font-size: 24px !important;
+  font-weight: 400 !important;
+  color: #ffffff !important;
+  letter-spacing: -0.5px !important;
+}
+
+.ai-chat-popup-welcome-sub {
+  font-size: 12px !important;
+  color: #64748b !important;
+}
+
+/* Streaming AI responses list */
+.ai-chat-popup-messages-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+}
+
+.ai-chat-msg-row {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  max-width: 85% !important;
+  padding: 14px 18px !important;
+  border-radius: 12px !important;
+  font-size: 12px !important;
+  line-height: 1.6 !important;
+}
+
+.ai-chat-msg-row--user {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  color: #f1f5f9 !important;
+  align-self: flex-end !important;
+}
+
+.ai-chat-msg-row--assistant {
+  background: rgba(30, 41, 59, 0.4) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  color: #e2e8f0 !important;
+  align-self: flex-start !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+}
+
+.ai-chat-action-bar {
+  display: flex !important;
+  gap: 10px !important;
+  margin-top: 8px !important;
+  justify-content: flex-start !important;
+}
+
+.ai-chat-action-btn {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 6px !important;
+  padding: 4px 8px !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  color: #94a3b8 !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.ai-chat-action-btn:hover {
+  background: rgba(59, 130, 246, 0.1) !important;
+  border-color: #3b82f6 !important;
+  color: #3b82f6 !important;
+}
+
+/* Gemini Center Input Pill Bar */
+.ai-chat-popup-input-area {
+  padding: 20px 24px !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.04) !important;
+}
+
+.ai-chat-popup-input-pill {
+  background: rgba(9, 11, 16, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 28px !important;
+  padding: 6px 12px 6px 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4) !important;
+}
+
+.ai-chat-popup-import-btn {
+  background: transparent !important;
+  border: none !important;
+  color: #94a3b8 !important;
+  font-size: 18px !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: color 0.15s ease !important;
+  padding: 0 !important;
+}
+
+.ai-chat-popup-import-btn:hover {
+  color: #ffffff !important;
+}
+
+.ai-chat-popup-textarea {
+  flex: 1 !important;
+  background: transparent !important;
+  border: none !important;
+  color: #ffffff !important;
+  outline: none !important;
+  font-size: 13px !important;
+  font-family: inherit !important;
+  resize: none !important;
+  height: 24px !important;
+  line-height: 24px !important;
+  padding: 0 !important;
+}
+
+.ai-chat-popup-textarea::placeholder {
+  color: #64748b !important;
+}
+
+.ai-chat-popup-controls-right {
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+}
+
+.ai-chat-popup-model-select {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 14px !important;
+  padding: 4px 12px !important;
+  font-size: 11px !important;
+  color: #94a3b8 !important;
+  outline: none !important;
+  cursor: pointer !important;
+}
+
+.ai-chat-popup-mic-btn {
+  background: transparent !important;
+  border: none !important;
+  color: #94a3b8 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: color 0.15s ease !important;
+  padding: 0 !important;
+}
+
+.ai-chat-popup-mic-btn:hover {
+  color: #3b82f6 !important;
+}
+
+
+/* ===========================================================================
+   TACTICAL GEOPOLITICAL GRAPH SANDBOX GRAPHICS & FLOATING WIDGET SYSTEM
+   =========================================================================== */
+.tactical-planner-grid {
+  position: relative !important;
+  height: calc(100vh - 120px) !important; /* Bounds inside workspace frame */
+  width: 100% !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  font-family: 'Calibri', 'Arial', sans-serif !important;
+}
+
+/* Sandbox menu bar and items */
+.sandbox-menu-bar {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  background: rgba(13, 15, 20, 0.9) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  padding: 6px 12px !important;
+  z-index: 10 !important;
+  user-select: none !important;
+}
+
+.sandbox-menu-item {
+  position: relative !important;
+}
+
+.sandbox-menu-btn {
+  background: transparent !important;
+  border: none !important;
+  color: #94a3b8 !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  padding: 4px 8px !important;
+  border-radius: 4px !important;
+  transition: all 0.15s ease !important;
+}
+
+.sandbox-menu-btn:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #f1f5f9 !important;
+}
+
+.sandbox-dropdown-content {
+  display: none !important;
+  position: absolute !important;
+  top: 100% !important;
+  left: 0 !important;
+  background: #151821 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3) !important;
+  min-width: 160px !important;
+  z-index: 100 !important;
+  flex-direction: column !important;
+}
+
+.sandbox-menu-item:hover .sandbox-dropdown-content {
+  display: flex !important;
+}
+
+.sandbox-dropdown-content a {
+  color: #94a3b8 !important;
+  padding: 8px 12px !important;
+  text-decoration: none !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  transition: all 0.15s ease !important;
+}
+
+.sandbox-dropdown-content a:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #f1f5f9 !important;
+}
+
+.sandbox-current-file-label {
+  margin-left: auto !important;
+  font-size: 10px !important;
+  color: #64748b !important;
+  font-family: var(--font-mono) !important;
+}
+
+.sandbox-canvas-container {
+  position: relative !important;
+  flex: 1 !important;
+  background: #0d0f14 !important;
+  overflow: hidden !important;
+}
+
+/* Draggable Glassmorphic Floating Popups */
+.planner-floating-popup {
+  position: absolute !important;
+  z-index: 20 !important;
+  background: rgba(21, 24, 33, 0.85) !important;
+  backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5) !important;
+  border-radius: 12px !important;
+  width: 320px !important;
+  max-height: 80vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  transition: box-shadow 0.15s ease !important;
+}
+
+.planner-floating-popup .tactical-card-title {
+  padding: 8px 12px !important;
+  background: rgba(13, 15, 20, 0.6) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  cursor: move !important;
+  user-select: none !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+.popup-minimize-btn {
+  background: transparent !important;
+  border: none !important;
+  color: #64748b !important;
+  font-size: 16px !important;
+  cursor: pointer !important;
+  width: 22px !important;
+  height: 22px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 4px !important;
+  transition: all 0.15s ease !important;
+}
+
+.popup-minimize-btn:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #f1f5f9 !important;
+}
+
+#tab-planner {
+  padding: 0 !important;
+  display: none !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  overflow: hidden !important;
+}
+
+#tab-planner.active {
+  display: flex !important;
+}
+
+/* Predefined popup coordinates overlaying canvas */
+#popup-op-controls {
+  top: 50px;
+  left: 20px;
+}
+
+#popup-node-mgmt {
+  top: 50px;
+  right: 20px;
+}
+
+#popup-intel-briefing {
+  bottom: 20px;
+  left: 20px;
+  width: 440px !important;
+  max-height: 40vh !important;
+}
+
+/* Styling for highly polished tactical document previews (Briefings) */
+.tactical-doc-preview {
+  padding: 12px !important;
+  background: rgba(9, 11, 16, 0.4) !important;
+  border: 1px solid rgba(255, 255, 255, 0.04) !important;
+  border-radius: 8px !important;
+  color: #e2e8f0 !important;
+  font-size: 11px !important;
+  line-height: 1.5 !important;
+  font-family: 'Calibri', 'Arial', sans-serif !important;
+  overflow-y: auto !important;
+}
+
+.tactical-doc-preview h3 {
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: #3b82f6 !important;
+  border-bottom: 1px solid rgba(59, 130, 246, 0.2) !important;
+  padding-bottom: 4px !important;
+  margin-top: 0 !important;
+  margin-bottom: 8px !important;
+}
+
+.tactical-doc-preview strong {
+  color: #f1f5f9 !important;
+}
+
+.tactical-doc-preview hr {
+  border: none !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  margin: 10px 0 !important;
+}
+
+.sandbox-ctrl-btn {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 4px !important;
+  padding: 4px 10px !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  color: #94a3b8 !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.sandbox-ctrl-btn:hover, .sandbox-ctrl-btn.active {
+  background: rgba(59, 130, 246, 0.1) !important;
+  border-color: #3b82f6 !important;
+  color: #3b82f6 !important;
+}
+
+/* SVG D3 Force Nodes & Edges Styling */
+.node-circle {
+  stroke-width: 2px !important;
+  transition: r 0.2s ease, stroke-width 0.2s ease !important;
+}
+
+.node-circle:hover {
+  r: 10px !important;
+  stroke-width: 3px !important;
+}
+
+.node-circle.selected {
+  stroke: #ffffff !important;
+  stroke-width: 3px !important;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.4)) !important;
+}
+
+.node-label {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  fill: #f1f5f9 !important;
+  pointer-events: none !important;
+  text-anchor: middle !important;
+}
+
+.link-line {
+  stroke: rgba(255, 255, 255, 0.12) !important;
+  stroke-width: 1.5px !important;
+  fill: none !important;
+  pointer-events: none !important;
+  transition: stroke 0.2s ease !important;
+}
+
+.link-line.selected {
+  stroke: #3b82f6 !important;
+  stroke-width: 2px !important;
+}
+
+.link-label {
+  font-size: 8px !important;
+  font-weight: 600 !important;
+  fill: #475569 !important;
+  pointer-events: none !important;
+  text-anchor: middle !important;
+}
+
+/* Neo4j Style legends */
+.sandbox-neo4j-legend {
+  position: absolute !important;
+  top: 12px !important;
+  right: 12px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  background: rgba(9, 11, 16, 0.8) !important;
+  padding: 10px 14px !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border-radius: 8px !important;
+  pointer-events: none !important;
+  z-index: 10 !important;
+}
+
+.legend-badge {
+  display: inline-block !important;
+  padding: 3px 8px !important;
+  border-radius: 12px !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  border: 1px solid transparent !important;
+}
+
+.badge-intel { background: rgba(245, 158, 11, 0.15) !important; border-color: #f59e0b !important; color: #f59e0b !important; }
+.badge-place { background: rgba(168, 85, 247, 0.15) !important; border-color: #a855f7 !important; color: #a855f7 !important; }
+.badge-people { background: rgba(249, 115, 22, 0.15) !important; border-color: #f97316 !important; color: #f97316 !important; }
+.badge-location { background: rgba(59, 130, 246, 0.15) !important; border-color: #3b82f6 !important; color: #3b82f6 !important; }
+.badge-news { background: rgba(239, 68, 68, 0.15) !important; border-color: #ef4444 !important; color: #ef4444 !important; }
+.badge-feed { background: rgba(16, 185, 129, 0.15) !important; border-color: #10b981 !important; color: #10b981 !important; }
+
+/* Selection Box / Lasso styles */
+.sandbox-selection-info {
+  position: absolute !important;
+  bottom: 12px !important;
+  right: 12px !important;
+  background: rgba(37, 99, 235, 0.2) !important;
+  border: 1px solid #2563eb !important;
+  border-radius: 6px !important;
+  padding: 8px 12px !important;
+  font-size: 10px !important;
+  color: #ffffff !important;
+  backdrop-filter: blur(4px) !important;
+  z-index: 10 !important;
+}
+
+.sandbox-selection-info kbd {
+  background: #2563eb !important;
+  padding: 2px 4px !important;
+  border-radius: 4px !important;
+  font-family: inherit !important;
+}
+
+.lasso-box {
+  stroke: #3b82f6 !important;
+  stroke-width: 1.5px !important;
+  stroke-dasharray: 4px !important;
+  fill: rgba(59, 130, 246, 0.1) !important;
+  pointer-events: none !important;
+}
+
+/* Custom interactive cursors */
+.planner-sandbox-col.lasso-cursor svg {
+  cursor: crosshair !important;
+}
+
+.planner-sandbox-col.connect-cursor svg {
+  cursor: cell !important;
+}
+

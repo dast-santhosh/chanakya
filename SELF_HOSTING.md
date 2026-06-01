@@ -12,8 +12,8 @@ Run the full World Monitor stack locally with Docker/Podman.
 
 ```bash
 # 1. Clone and enter the repo
-git clone https://github.com/koala73/worldmonitor.git
-cd worldmonitor
+git clone https://github.com/dast-santhosh/chanakya.git
+cd chanakya
 npm install
 
 # 2. Generate the REQUIRED secrets. Without these the stack will not start

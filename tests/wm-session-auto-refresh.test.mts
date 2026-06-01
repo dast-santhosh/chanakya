@@ -104,11 +104,11 @@ const stubLocalStorage: Storage = {
 // transitively via runtime.ts → wm-session.ts) reads `location.hostname` at
 // module-eval time and calls `.startsWith(...)` on it.
 (globalThis as unknown as { location: Location }).location = {
-  href: 'https://worldmonitor.app/',
-  origin: 'https://worldmonitor.app',
-  hostname: 'worldmonitor.app',
+  href: 'https://ajnav.com/',
+  origin: 'https://ajnav.com',
+  hostname: 'ajnav.com',
   protocol: 'https:',
-  host: 'worldmonitor.app',
+  host: 'ajnav.com',
 } as Location;
 
 // ---------------------------------------------------------------------------
@@ -303,7 +303,7 @@ describe('wm-session refresh-on-401 (Layer 2)', () => {
       return Promise.resolve(new Response('unhandled', { status: 500 }));
     };
 
-    const resp = await wrappedFetch('https://api.worldmonitor.app/api/bootstrap');
+    const resp = await wrappedFetch('https://api.ajnav.com/api/bootstrap');
     assert.equal(resp.status, 200, 'final response should be the retried 200');
     assert.equal(bootstrapAttempts, 2, 'bootstrap should be called twice (initial 401 + retry)');
     assert.equal(mintCalls, 1, 'one mint between the 401 and the retry');
@@ -329,7 +329,7 @@ describe('wm-session refresh-on-401 (Layer 2)', () => {
     };
 
     // Pick any premium path — analyze-stock is one.
-    const resp = await wrappedFetch('https://api.worldmonitor.app/api/market/v1/analyze-stock');
+    const resp = await wrappedFetch('https://api.ajnav.com/api/market/v1/analyze-stock');
     assert.equal(resp.status, 401);
     assert.equal(attempts, 1, 'premium path must NOT trigger a retry inside this interceptor');
     assert.equal(mintCalls, 0, 'premium path must NOT mint a wms_ token (the dedicated injector handles it)');
@@ -357,7 +357,7 @@ describe('wm-session refresh-on-401 (Layer 2)', () => {
       return Promise.resolve(new Response('unauthorized', { status: 401 }));
     };
 
-    const resp = await wrappedFetch('https://api.worldmonitor.app/api/bootstrap', {
+    const resp = await wrappedFetch('https://api.ajnav.com/api/bootstrap', {
       headers: { Authorization: 'Bearer caller-supplied-jwt' },
     });
     assert.equal(resp.status, 401);
@@ -395,7 +395,7 @@ describe('wm-session refresh-on-401 (Layer 2)', () => {
     const originalWarn = console.warn;
     console.warn = (...args: unknown[]) => { warnings.push(args.map(String).join(' ')); };
     try {
-      const resp = await wrappedFetch('https://api.worldmonitor.app/api/bootstrap');
+      const resp = await wrappedFetch('https://api.ajnav.com/api/bootstrap');
       assert.equal(resp.status, 401, 'returns second 401 instead of looping');
     } finally {
       console.warn = originalWarn;

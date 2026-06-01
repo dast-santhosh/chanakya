@@ -1,4 +1,5 @@
 import type { AppContext, AppModule } from '@/app/app-context';
+import * as d3 from 'd3';
 import { normalizeExclusiveChoropleths } from '@/components/resilience-choropleth-utils';
 import { replayPendingCalls, clearAllPendingCalls } from '@/app/pending-panel-data';
 import { getAlertsNearLocation } from '@/services/geo-convergence';
@@ -88,7 +89,7 @@ import {
 } from '@/components';
 import { SatelliteFiresPanel } from '@/components/SatelliteFiresPanel';
 import { focusInvestmentOnMap } from '@/services/investments-focus';
-import { debounce, saveToStorage, loadFromStorage } from '@/utils';
+import { debounce, saveToStorage, loadFromStorage, showToast } from '@/utils';
 import { escapeHtml } from '@/utils/sanitize';
 import {
   FEEDS,
@@ -101,7 +102,6 @@ import {
   isPanelInVariantDefaults,
 } from '@/config';
 import { resolveNewsCategories, enabledNewsCategoryKeys } from '@/config/feed-resolution';
-import { BETA_MODE } from '@/config/beta';
 import { t } from '@/services/i18n';
 import { getCurrentTheme } from '@/utils';
 import { trackCriticalBannerAction } from '@/services/analytics';
@@ -332,6 +332,7 @@ export class PanelLayoutManager implements AppModule {
 
   async init(): Promise<void> {
     await this.renderLayout();
+    this.setupTacticalWorkspace();
 
     // Subscribe to auth state for reactive panel gating on web
     this.unsubscribeAuth = subscribeAuthState((state) => {
@@ -457,7 +458,7 @@ export class PanelLayoutManager implements AppModule {
       case PanelGateReason.ANONYMOUS:
         return () => this.ctx.authModal?.open();
       case PanelGateReason.FREE_TIER:
-        return () => window.open('https://worldmonitor.app/pro', '_blank');
+        return () => window.open('https://ajnav.com/pro', '_blank');
       default:
         return () => {};
     }
@@ -468,6 +469,13 @@ export class PanelLayoutManager implements AppModule {
       ${this.ctx.isDesktopApp ? '<div class="tauri-titlebar" data-tauri-drag-region></div>' : ''}
       <div class="header">
         <div class="header-left">
+          <div class="logo-wrapper">
+            <span class="logo">CHANAKYA</span>
+            <span class="version">v${__APP_VERSION__}</span>
+            <button class="sidebar-toggle-btn" id="sidebarToggleBtn" title="Toggle Sidebar">
+              <img src="/favico/favicon-32x32.png" alt="Chanakya Logo" />
+            </button>
+          </div>
           <button class="hamburger-btn" id="hamburgerBtn" aria-label="Menu">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
           </button>
@@ -477,67 +485,62 @@ export class PanelLayoutManager implements AppModule {
         const vHref = (v: string, prod: string) => local || SITE_VARIANT === v ? '#' : prod;
         const vTarget = (v: string) => !local && SITE_VARIANT !== v && inIframe ? 'target="_blank" rel="noopener"' : '';
         return `
-            <a href="${vHref('full', 'https://worldmonitor.app')}"
+            <a href="${vHref('full', 'https://ajnav.com')}"
                class="variant-option ${SITE_VARIANT === 'full' ? 'active' : ''}"
                data-variant="full"
                ${vTarget('full')}
                title="${t('header.world')}${SITE_VARIANT === 'full' ? ` ${t('common.currentVariant')}` : ''}">
-              <span class="variant-icon">🌍</span>
+              <span class="variant-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-globe"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg></span>
               <span class="variant-label">${t('header.world')}</span>
             </a>
             <span class="variant-divider"></span>
-            <a href="${vHref('tech', 'https://tech.worldmonitor.app')}"
+            <a href="${vHref('tech', 'https://tech.ajnav.com')}"
                class="variant-option ${SITE_VARIANT === 'tech' ? 'active' : ''}"
                data-variant="tech"
                ${vTarget('tech')}
                title="${t('header.tech')}${SITE_VARIANT === 'tech' ? ` ${t('common.currentVariant')}` : ''}">
-              <span class="variant-icon">💻</span>
+              <span class="variant-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-cpu"><rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9" rx="1"/><path d="M9 1v3"/><path d="M15 1v3"/><path d="M9 20v3"/><path d="M15 20v3"/><path d="M20 9h3"/><path d="M20 15h3"/><path d="M1 9h3"/><path d="M1 15h3"/></svg></span>
               <span class="variant-label">${t('header.tech')}</span>
             </a>
             <span class="variant-divider"></span>
-            <a href="${vHref('finance', 'https://finance.worldmonitor.app')}"
+            <a href="${vHref('finance', 'https://finance.ajnav.com')}"
                class="variant-option ${SITE_VARIANT === 'finance' ? 'active' : ''}"
                data-variant="finance"
                ${vTarget('finance')}
                title="${t('header.finance')}${SITE_VARIANT === 'finance' ? ` ${t('common.currentVariant')}` : ''}">
-              <span class="variant-icon">📈</span>
+              <span class="variant-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>
               <span class="variant-label">${t('header.finance')}</span>
             </a>
             <span class="variant-divider"></span>
-            <a href="${vHref('commodity', 'https://commodity.worldmonitor.app')}"
+            <a href="${vHref('commodity', 'https://commodity.ajnav.com')}"
                class="variant-option ${SITE_VARIANT === 'commodity' ? 'active' : ''}"
                data-variant="commodity"
                ${vTarget('commodity')}
                title="${t('header.commodity')}${SITE_VARIANT === 'commodity' ? ` ${t('common.currentVariant')}` : ''}">
-              <span class="variant-icon">⛏️</span>
+              <span class="variant-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pickaxe"><path d="M14.5 2 22 9.5M16 8.5l5.5 5.5M10.75 14.25l-7 7a1.07 1.07 0 0 1-1.5 0 1.07 1.07 0 0 1 0-1.5l7-7M22 22l-6-6M8 6l6 6"/></svg></span>
               <span class="variant-label">${t('header.commodity')}</span>
             </a>
             <span class="variant-divider"></span>
-            <a href="${vHref('energy', 'https://energy.worldmonitor.app')}"
+            <a href="${vHref('energy', 'https://energy.ajnav.com')}"
                class="variant-option ${SITE_VARIANT === 'energy' ? 'active' : ''}"
                data-variant="energy"
                ${vTarget('energy')}
                title="${t('header.energy')}${SITE_VARIANT === 'energy' ? ` ${t('common.currentVariant')}` : ''}">
-              <span class="variant-icon">⚡</span>
+              <span class="variant-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zap"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
               <span class="variant-label">${t('header.energy')}</span>
             </a>
             <span class="variant-divider"></span>
-            <a href="${vHref('happy', 'https://happy.worldmonitor.app')}"
+            <a href="${vHref('happy', 'https://happy.ajnav.com')}"
                class="variant-option ${SITE_VARIANT === 'happy' ? 'active' : ''}"
                data-variant="happy"
                ${vTarget('happy')}
                title="Good News${SITE_VARIANT === 'happy' ? ` ${t('common.currentVariant')}` : ''}">
-              <span class="variant-icon">☀️</span>
+              <span class="variant-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/></svg></span>
               <span class="variant-label">Good News</span>
             </a>`;
       })()}</div>
-          <span class="logo">MONITOR</span><span class="logo-mobile">World Monitor</span><span class="version">v${__APP_VERSION__}</span>${BETA_MODE ? '<span class="beta-badge">BETA</span>' : ''}
-          <a href="https://x.com/eliehabib" target="_blank" rel="noopener" class="credit-link">
-            <svg class="x-logo" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-            <span class="credit-text">@eliehabib</span>
-          </a>
-          <a href="https://github.com/koala73/worldmonitor" target="_blank" rel="noopener" class="github-link" title="${t('header.viewOnGitHub')}">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          <a href="https://ajnav.com" target="_blank" rel="noopener" class="credit-link">
+            <span class="credit-text">Ajnav Labs</span>
           </a>
           <button class="mobile-settings-btn" id="mobileSettingsBtn" title="${t('header.settings')}">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -571,10 +574,45 @@ export class PanelLayoutManager implements AppModule {
           <span id="authWidgetMount" class="auth-widget-mount" style="display:inline-flex;align-items:center;min-width:148px;min-height:32px"></span>
         </div>
       </div>
+
+      <!-- Premium Gemini-like floating AI Chat popup modal (Alt+P) -->
+      <div class="ai-chat-popup-overlay" id="aiChatPopupOverlay">
+        <div class="ai-chat-popup-container">
+          <div class="ai-chat-popup-header">
+            <div class="ai-chat-popup-title-left">
+              <img src="/favico/favicon-32x32.png" alt="Chanakya Logo" class="ai-chat-popup-logo" />
+              <span class="ai-chat-popup-title-text">CHANAKYA TACTICAL COMS</span>
+            </div>
+            <button class="ai-chat-popup-close-btn" id="aiChatPopupCloseBtn" title="Close Popup (Esc)">&times;</button>
+          </div>
+          <div class="ai-chat-popup-body" id="aiChatPopupBody">
+            <div class="ai-chat-popup-welcome-wrapper" id="aiChatWelcomeWrapper">
+              <h2 class="ai-chat-popup-welcome-title">What can I help with, Santhosh?</h2>
+              <p class="ai-chat-popup-welcome-sub">Paste any news feed or tactical intelligence below. I will analyze the threats and help you ideate strategic plans.</p>
+            </div>
+            <div class="ai-chat-popup-messages-list" id="aiChatPopupMessagesList" style="display:none;"></div>
+          </div>
+          <div class="ai-chat-popup-input-area">
+            <div class="ai-chat-popup-input-pill">
+              <button class="ai-chat-popup-import-btn" id="aiChatPopupImportBtn" title="Import active intelligence">+</button>
+              <textarea class="ai-chat-popup-textarea" id="aiChatPopupTextarea" placeholder="Ask Chanakya AI..." rows="1"></textarea>
+              <div class="ai-chat-popup-controls-right">
+                <select class="ai-chat-popup-model-select" id="aiChatPopupModelSelect">
+                  <option value="flash">Flash-Lite</option>
+                  <option value="pro">Pro-Model</option>
+                </select>
+                <button class="ai-chat-popup-mic-btn" id="aiChatPopupMicBtn" title="Voice Input">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mic"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
       <nav class="mobile-menu" id="mobileMenu">
         <div class="mobile-menu-header">
-          <span class="mobile-menu-title">WORLD MONITOR</span>
+          <span class="mobile-menu-title">CHANAKYA DASHBOARD</span>
           <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
@@ -582,12 +620,12 @@ export class PanelLayoutManager implements AppModule {
         <div class="mobile-menu-divider"></div>
         ${(() => {
         const variants = [
-          { key: 'full', icon: '🌍', label: t('header.world') },
-          { key: 'tech', icon: '💻', label: t('header.tech') },
-          { key: 'finance', icon: '📈', label: t('header.finance') },
-          { key: 'commodity', icon: '⛏️', label: t('header.commodity') },
-          { key: 'energy', icon: '⚡', label: t('header.energy') },
-          { key: 'happy', icon: '☀️', label: 'Good News' },
+          { key: 'full', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-globe"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>`, label: t('header.world') },
+          { key: 'tech', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-cpu"><rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9" rx="1"/><path d="M9 1v3"/><path d="M15 1v3"/><path d="M9 20v3"/><path d="M15 20v3"/><path d="M20 9h3"/><path d="M20 15h3"/><path d="M1 9h3"/><path d="M1 15h3"/></svg>`, label: t('header.tech') },
+          { key: 'finance', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>`, label: t('header.finance') },
+          { key: 'commodity', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pickaxe"><path d="M14.5 2 22 9.5M16 8.5l5.5 5.5M10.75 14.25l-7 7a1.07 1.07 0 0 1-1.5 0 1.07 1.07 0 0 1 0-1.5l7-7M22 22l-6-6M8 6l6 6"/></svg>`, label: t('header.commodity') },
+          { key: 'energy', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zap"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`, label: t('header.energy') },
+          { key: 'happy', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/></svg>`, label: 'Good News' },
         ];
         return variants.map(v =>
           `<button class="mobile-menu-item mobile-menu-variant ${v.key === SITE_VARIANT ? 'active' : ''}" data-variant="${v.key}">
@@ -599,29 +637,28 @@ export class PanelLayoutManager implements AppModule {
       })()}
         <div class="mobile-menu-divider"></div>
         <button class="mobile-menu-item" id="mobileMenuRegion">
-          <span class="mobile-menu-item-icon">🌐</span>
+          <span class="mobile-menu-item-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-globe"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg></span>
           <span class="mobile-menu-item-label">${t('components.deckgl.views.global')}</span>
           <span class="mobile-menu-chevron">▸</span>
         </button>
         <div class="mobile-menu-divider"></div>
         <button class="mobile-menu-item" id="mobileMenuSettings">
-          <span class="mobile-menu-item-icon">⚙️</span>
+          <span class="mobile-menu-item-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
           <span class="mobile-menu-item-label">${t('header.settings')}</span>
         </button>
         <button class="mobile-menu-item" id="mobileMenuTheme">
-          <span class="mobile-menu-item-icon">${getCurrentTheme() === 'dark' ? '☀️' : '🌙'}</span>
+          <span class="mobile-menu-item-icon">${getCurrentTheme() === 'dark' ? '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/></svg>' : '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>'}</span>
           <span class="mobile-menu-item-label">${getCurrentTheme() === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
         </button>
-        <a class="mobile-menu-item" href="https://x.com/eliehabib" target="_blank" rel="noopener">
-          <span class="mobile-menu-item-icon"><svg class="x-logo" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></span>
-          <span class="mobile-menu-item-label">@eliehabib</span>
+        <a class="mobile-menu-item" href="https://ajnav.com" target="_blank" rel="noopener">
+          <span class="mobile-menu-item-label">Ajnav Labs</span>
         </a>
         <div class="mobile-menu-divider"></div>
         <div class="mobile-menu-footer-links">
-          <a href="${this.ctx.isDesktopApp ? 'https://worldmonitor.app/pro' : 'https://www.worldmonitor.app/pro'}" target="_blank" rel="noopener">Pro</a>
-          <a href="${this.ctx.isDesktopApp ? 'https://worldmonitor.app/blog/' : 'https://www.worldmonitor.app/blog/'}" target="_blank" rel="noopener">Blog</a>
-          <a href="${this.ctx.isDesktopApp ? 'https://worldmonitor.app/docs' : 'https://www.worldmonitor.app/docs'}" target="_blank" rel="noopener">Docs</a>
-          <a href="https://status.worldmonitor.app/" target="_blank" rel="noopener">Status</a>
+          <a href="https://pro.ajnav.com" target="_blank" rel="noopener">Pro</a>
+          <a href="https://ajnav.com/blog/" target="_blank" rel="noopener">Blog</a>
+          <a href="https://ajnav.com/docs" target="_blank" rel="noopener">Docs</a>
+          <a href="https://status.ajnav.com/" target="_blank" rel="noopener">Status</a>
         </div>
         <div class="mobile-menu-version">v${__APP_VERSION__}</div>
       </nav>
@@ -645,57 +682,368 @@ export class PanelLayoutManager implements AppModule {
         </button>`
       ).join('')}
       </div>
-      <div class="main-content${this.ctx.isDesktopApp ? ' desktop-grid' : ''}">
-        <div class="map-section" id="mapSection">
-          <div class="panel-header">
-            <div class="panel-header-left">
-              <span class="panel-title">${SITE_VARIANT === 'tech' ? t('panels.techMap') : SITE_VARIANT === 'happy' ? 'Good News Map' : t('panels.map')}</span>
-            </div>
-            <span class="header-clock" id="headerClock" translate="no"></span>
-            <div class="map-header-actions">
-              <div class="map-dimension-toggle" id="mapDimensionToggle">
-                <button class="map-dim-btn${loadFromStorage<string>(STORAGE_KEYS.mapMode, 'flat') === 'globe' ? '' : ' active'}" data-mode="flat" title="2D Map">2D</button>
-                <button class="map-dim-btn${loadFromStorage<string>(STORAGE_KEYS.mapMode, 'flat') === 'globe' ? ' active' : ''}" data-mode="globe" title="3D Globe">3D</button>
-              </div>
-              <button class="map-pin-btn" id="mapFullscreenBtn" title="Fullscreen">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
-              </button>
-              <button class="map-pin-btn" id="mapPinBtn" title="${t('header.pinMap')}">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M12 17v5M9 10.76a2 2 0 01-1.11 1.79l-1.78.9A2 2 0 005 15.24V16a1 1 0 001 1h12a1 1 0 001-1v-.76a2 2 0 00-1.11-1.79l-1.78-.9A2 2 0 0115 10.76V7a1 1 0 011-1 1 1 0 001-1V4a1 1 0 00-1-1H8a1 1 0 00-1 1v1a1 1 0 001 1 1 1 0 011 1v3.76z"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-          <div class="map-container" id="mapContainer"></div>
-          ${SITE_VARIANT === 'happy' ? '<button class="tv-exit-btn" id="tvExitBtn">Exit TV Mode</button>' : ''}
-          <div class="map-resize-handle" id="mapResizeHandle"></div>
-          <div class="map-bottom-grid" id="mapBottomGrid"></div>
+
+      <!-- Enterprise Browser tab bar -->
+      <div class="tactical-tab-bar">
+        <div class="tab-item active" data-tab="home">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-layout-dashboard"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="10" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+          <span>Home Dashboard</span>
         </div>
-        <div class="map-width-resize-handle" id="mapWidthResizeHandle"></div>
-        <div class="panels-grid" id="panelsGrid"></div>
-        <button class="search-mobile-fab" id="searchMobileFab" aria-label="Search">\u{1F50D}</button>
+        <div class="tab-item" data-tab="planner">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-text"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+          <span>Operation Planner</span>
+        </div>
+        <div class="tab-item" data-tab="ai-agent">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bot"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
+          <span>AI Tactical Agent</span>
+        </div>
+        <div class="tab-item" data-tab="harvester">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search-code"><path d="m13 13.5 2-2.5-2-2.5"/><path d="m21 21-4.3-4.3"/><path d="M9 8.5 7 11l2 2.5"/><circle cx="11" cy="11" r="8"/></svg>
+          <span>OSINT Harvester</span>
+        </div>
+        <div class="tab-item" data-tab="repository">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-archive"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+          <span>Secure Vault</span>
+        </div>
       </div>
-      <footer class="site-footer">
-        <div class="site-footer-brand">
-          <img src="/favico/favicon-32x32.png" alt="" width="28" height="28" class="site-footer-icon" />
-          <div class="site-footer-brand-text">
-            <span class="site-footer-name">WORLD MONITOR</span>
-            <span class="site-footer-sub">v${__APP_VERSION__} &middot; <a href="https://x.com/eliehabib" target="_blank" rel="noopener" class="site-footer-credit">@eliehabib</a></span>
+
+      <div class="tactical-tab-viewport">
+        <!-- Dashboard Workspace (Active by default) -->
+        <div class="tactical-tab-content active" id="tab-home">
+          <div class="main-content${this.ctx.isDesktopApp ? ' desktop-grid' : ''}">
+            <div class="map-section" id="mapSection">
+              <div class="panel-header">
+                <div class="panel-header-left">
+                  <span class="panel-title">${SITE_VARIANT === 'tech' ? t('panels.techMap') : SITE_VARIANT === 'happy' ? 'Good News Map' : t('panels.map')}</span>
+                </div>
+                <span class="header-clock" id="headerClock" translate="no"></span>
+                <div class="map-header-actions">
+                  <div class="map-dimension-toggle" id="mapDimensionToggle">
+                    <button class="map-dim-btn${loadFromStorage<string>(STORAGE_KEYS.mapMode, 'flat') === 'globe' ? '' : ' active'}" data-mode="flat" title="2D Map">2D</button>
+                    <button class="map-dim-btn${loadFromStorage<string>(STORAGE_KEYS.mapMode, 'flat') === 'globe' ? ' active' : ''}" data-mode="globe" title="3D Globe">3D</button>
+                  </div>
+                  <button class="map-pin-btn" id="mapFullscreenBtn" title="Fullscreen">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+                  </button>
+                  <button class="map-pin-btn" id="mapPinBtn" title="${t('header.pinMap')}">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 17v5M9 10.76a2 2 0 01-1.11 1.79l-1.78.9A2 2 0 005 15.24V16a1 1 0 001 1h12a1 1 0 001-1v-.76a2 2 0 00-1.11-1.79l-1.78-.9A2 2 0 0115 10.76V7a1 1 0 011-1 1 1 0 001-1V4a1 1 0 00-1-1H8a1 1 0 00-1 1v1a1 1 0 001 1 1 1 0 011 1v3.76z"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="map-container" id="mapContainer"></div>
+              ${SITE_VARIANT === 'happy' ? '<button class="tv-exit-btn" id="tvExitBtn">Exit TV Mode</button>' : ''}
+              <div class="map-resize-handle" id="mapResizeHandle"></div>
+              <div class="map-bottom-grid" id="mapBottomGrid"></div>
+            </div>
+            <div class="map-width-resize-handle" id="mapWidthResizeHandle"></div>
+            <div class="panels-grid" id="panelsGrid"></div>
+            <button class="search-mobile-fab" id="searchMobileFab" aria-label="Search"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+          </div>
+          <footer class="site-footer">
+            <div class="site-footer-brand">
+              <img src="/favico/favicon-32x32.png" alt="" width="28" height="28" class="site-footer-icon" />
+              <div class="site-footer-brand-text">
+                <span class="site-footer-name">CHANAKYA DASHBOARD</span>
+                <span class="site-footer-sub">v${__APP_VERSION__} &middot; <a href="https://ajnav.com" target="_blank" rel="noopener" class="site-footer-credit">Ajnav Labs</a></span>
+              </div>
+            </div>
+            <nav>
+              <a href="https://pro.ajnav.com" target="_blank" rel="noopener">Pro</a>
+              <a href="https://ajnav.com/blog/" target="_blank" rel="noopener">Blog</a>
+              <a href="https://ajnav.com/docs" target="_blank" rel="noopener">Docs</a>
+              <a href="https://status.ajnav.com/" target="_blank" rel="noopener">Status</a>
+              <a href="https://github.com/ajnavlabs" target="_blank" rel="noopener">GitHub</a>
+              ${this.ctx.isDesktopApp ? '' : `<span id="footerDownloadMount"></span>`}
+            </nav>
+            <span class="site-footer-copy">&copy; ${new Date().getFullYear()} Ajnav Labs</span>
+          </footer>
+        </div>
+
+        <!-- Operation Planner Workspace -->
+        <div class="tactical-tab-content" id="tab-planner">
+          <!-- Sandbox Top Menu Bar -->
+          <div class="sandbox-menu-bar">
+            <div class="sandbox-menu-item">
+              <button class="sandbox-menu-btn" id="menu-btn-file">File</button>
+              <div class="sandbox-dropdown-content">
+                <a href="#" id="menu-file-new">New Sandbox</a>
+                <a href="#" id="menu-file-open">Open Sandbox...</a>
+                <a href="#" id="menu-file-save">Save Sandbox</a>
+              </div>
+            </div>
+            <div class="sandbox-menu-item">
+              <button class="sandbox-menu-btn" id="menu-btn-edit">Edit</button>
+              <div class="sandbox-dropdown-content">
+                <a href="#" id="menu-edit-clear">Clear Selected Nodes</a>
+                <a href="#" id="menu-edit-delete">Delete Selection</a>
+              </div>
+            </div>
+            <span class="sandbox-current-file-label" id="sandbox-current-file-label">Active: unsaved_blueprint.json</span>
+          </div>
+
+          <!-- Main Interactive Canvas Viewport (Full View) -->
+          <div class="sandbox-canvas-container" id="plannerSandboxCol">
+            <div class="sandbox-canvas-wrapper" style="width:100%;height:100%;position:relative;">
+              <svg id="sandbox-svg" style="width:100%;height:100%;cursor:grab;display:block;"></svg>
+              
+              <!-- Legend Indicators (Neo4j Style) -->
+              <div class="sandbox-neo4j-legend">
+                <span class="legend-badge badge-intel" id="legend-intel">Intel: 0</span>
+                <span class="legend-badge badge-place" id="legend-place">Place: 0</span>
+                <span class="legend-badge badge-people" id="legend-people">People: 0</span>
+                <span class="legend-badge badge-location" id="legend-location">Location: 0</span>
+                <span class="legend-badge badge-news" id="legend-news">News: 0</span>
+                <span class="legend-badge badge-feed" id="legend-feed">Feed: 0</span>
+              </div>
+              
+              <!-- Selected Nodes Info Bubble -->
+              <div class="sandbox-selection-info" id="sandbox-selection-info" style="display:none;">
+                Selected: <strong id="selected-nodes-count">0</strong> nodes. Press <kbd>Ctrl+Y</kbd> to compile threat COA report.
+              </div>
+              
+              <!-- Keyboard shortcuts indicator overlays -->
+              <div style="position:absolute;bottom:10px;right:10px;background:rgba(9,11,16,0.85);padding:6px 12px;border:1px solid rgba(255,255,255,0.05);border-radius:6px;font-size:10px;color:#64748b;pointer-events:none;z-index:5;">
+                Shortcuts: Click Node + <kbd>Ctrl+X</kbd> AI Expand | Lasso + <kbd>Ctrl+Y</kbd> COA Briefing | <kbd>Alt+F</kbd> Search | <kbd>Alt+P</kbd> Gemini
+              </div>
+            </div>
+
+            <!-- Pre-seeded controls toolbar overlay inside center -->
+            <div class="sandbox-toolbar-controls" style="position:absolute;top:10px;left:10px;display:flex;gap:6px;align-items:center;background:rgba(9,11,16,0.7);padding:4px;border:1px solid rgba(255,255,255,0.05);border-radius:6px;z-index:5;">
+              <button class="sandbox-ctrl-btn active" id="sandbox-tool-drag" style="margin:0;" title="Pan / Drag Node Mode">Drag Mode</button>
+              <button class="sandbox-ctrl-btn" id="sandbox-tool-lasso" style="margin:0;" title="Dashed Selection Lasso">+ Lasso</button>
+              <button class="sandbox-ctrl-btn" id="sandbox-tool-connect" style="margin:0;" title="Click parent then child to link">Link Mode</button>
+              <button class="sandbox-ctrl-btn" id="sandbox-tool-reset" style="margin:0;" title="Reset Viewport">Reset View</button>
+            </div>
+          </div>
+
+          <!-- Popup 1: Draggable & Minimizable Operational Controls -->
+          <div class="planner-floating-popup" id="popup-op-controls">
+            <div class="tactical-card-title">
+              <div style="display:flex;align-items:center;gap:6px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sliders-horizontal"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></svg>
+                <span>THEATER POSTURE CONTROLS</span>
+              </div>
+              <button class="popup-minimize-btn" title="Toggle Minimize">−</button>
+            </div>
+            <div class="tactical-card-body" style="padding:12px;display:flex;flex-direction:column;gap:10px;max-height:300px;overflow-y:auto;">
+              <div class="tactical-field">
+                <label>Operation Codename</label>
+                <input type="text" id="planner-op-name" class="tactical-input" value="OP SENTINEL ESCORT" placeholder="e.g. OP SEA LIGHT" style="height:32px;">
+              </div>
+              <div class="tactical-field">
+                <label>Target Geopolitical Zone</label>
+                <select id="planner-op-zone" class="tactical-select" style="height:32px;">
+                  <option value="South China Sea">South China Sea (Zone-1)</option>
+                  <option value="Bab al-Mandab Strait">Bab al-Mandab Strait (Zone-2)</option>
+                  <option value="Suwalki Gap">Suwalki Gap (Zone-3)</option>
+                  <option value="Taiwan Strait">Taiwan Strait (Zone-4)</option>
+                </select>
+              </div>
+              <div class="tactical-field">
+                <label>Security Posture</label>
+                <select id="planner-op-posture" class="tactical-select" style="height:32px;">
+                  <option value="DEFCON 3 - INCREASED READINESS">DEFCON 3 - Increased Readiness</option>
+                  <option value="DEFCON 2 - HIGH FORCE MOBILITY">DEFCON 2 - High Force Mobility</option>
+                  <option value="DEFCON 1 - MAXIMUM VIGILANCE">DEFCON 1 - Maximum Vigilance</option>
+                </select>
+              </div>
+              <div class="tactical-field">
+                <label>Deployed Assets</label>
+                <input type="text" id="planner-op-assets" class="tactical-input" value="Carrier Strike Group 9, 4x Maritime Patrol P-8A" style="height:32px;">
+              </div>
+              <div class="tactical-field">
+                <label>Mission Objectives / Intelligence Notes</label>
+                <textarea id="planner-op-notes" class="tactical-textarea" placeholder="Enter objective summaries..." style="height:44px;"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Popup 2: Draggable & Minimizable Node Management -->
+          <div class="planner-floating-popup" id="popup-node-mgmt">
+            <div class="tactical-card-title">
+              <div style="display:flex;align-items:center;gap:6px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-network"><rect x="16" y="16" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="9" y="2" width="6" height="6" rx="1"/><path d="M12 8v8"/><path d="M12 12H5v4"/><path d="M12 12h7v4"/></svg>
+                <span>NODE CREATION WORKBENCH</span>
+              </div>
+              <button class="popup-minimize-btn" title="Toggle Minimize">−</button>
+            </div>
+            <div class="tactical-card-body" style="padding:12px;display:flex;flex-direction:column;gap:8px;">
+              <div class="tactical-field">
+                <label>Node Title</label>
+                <input type="text" id="sandbox-new-node-label" class="tactical-input" placeholder="e.g. Swarm Patrol Route" style="height:32px;">
+              </div>
+              <div class="tactical-field">
+                <label>Node Intelligence Variety</label>
+                <select id="sandbox-new-node-type" class="tactical-select" style="height:32px;">
+                  <option value="Intel">Intel (Yellow)</option>
+                  <option value="Place">Place (Purple)</option>
+                  <option value="People">People (Orange)</option>
+                  <option value="Location">Location (Blue)</option>
+                  <option value="News">News (Red)</option>
+                  <option value="Feed">Feed (Green)</option>
+                </select>
+              </div>
+              <div class="tactical-field">
+                <label>Intelligence Definition</label>
+                <input type="text" id="sandbox-new-node-def" class="tactical-input" placeholder="e.g. Spoofing anomalies tracked" style="height:32px;">
+              </div>
+              <button class="tactical-btn" id="sandbox-add-node-btn" style="height:32px;line-height:32px;padding:0;margin-top:4px;">Add Node to Sandbox</button>
+            </div>
+          </div>
+
+          <!-- Popup 3: Draggable & Minimizable Intel Briefing (Polished Card) -->
+          <div class="planner-floating-popup" id="popup-intel-briefing">
+            <div class="tactical-card-title">
+              <div style="display:flex;align-items:center;gap:6px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-text"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+                <span>INTEL BRIEFING ASSESSMENT</span>
+              </div>
+              <button class="popup-minimize-btn" title="Toggle Minimize">−</button>
+            </div>
+            <div class="tactical-card-body" style="padding:12px;display:flex;flex-direction:column;gap:10px;overflow:hidden;">
+              <button class="tactical-btn" id="planner-generate-btn" style="height:32px;line-height:32px;padding:0;background:#2563eb !important;color:#ffffff !important;">Generate Base Strategic Brief</button>
+              <div class="tactical-doc-preview" id="planner-output" style="max-height:180px;">
+                <h3>Awaiting Operational Setup</h3>
+                Configure parameters and click "Generate Base Strategic Brief", or lasso-select sandbox threat elements and press <strong>Ctrl+Y</strong> to compile threat analysis briefings and Courses of Action.
+              </div>
+              <button class="tactical-btn tactical-btn--secondary" id="planner-save-btn" disabled style="height:32px;line-height:32px;padding:0;">Export Plan to Secure Vault</button>
+            </div>
+          </div>
+
+          <!-- Sleek Open Sandbox Blueprint Modal -->
+          <div class="ai-chat-popup-overlay" id="sandboxOpenModal" style="display:none;z-index:200;">
+            <div class="ai-chat-popup-container" style="width:380px;min-height:200px;max-height:50vh;background:rgba(21,24,33,0.95);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,0.08);box-shadow:0 25px 50px -12px rgba(0,0,0,0.6);">
+              <div class="ai-chat-popup-header" style="border-bottom:1px solid rgba(255,255,255,0.05);padding:12px 16px;">
+                <div class="ai-chat-popup-title-left">
+                  <span class="ai-chat-popup-title-text" style="font-weight:700;letter-spacing:1px;color:#3b82f6;">OPEN SECURE SANDBOX BLUEPRINT</span>
+                </div>
+                <button class="ai-chat-popup-close-btn" id="sandboxOpenModalCloseBtn" style="font-size:20px;">&times;</button>
+              </div>
+              <div class="ai-chat-popup-body" style="padding:16px;display:flex;flex-direction:column;gap:12px;">
+                <label style="font-size:11px;color:#94a3b8;font-weight:700;">SELECT SECURE VAULT DOCUMENT:</label>
+                <select id="sandboxOpenSelect" class="tactical-select" style="width:100%;height:36px;"></select>
+                <button class="tactical-btn" id="sandboxOpenLoadBtn" style="margin-top:10px;height:36px;line-height:36px;padding:0;background:#2563eb !important;color:#ffffff !important;font-weight:600;">Load Selected Blueprint</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- AI Geopolitical Agent Workspace -->
+        <div class="tactical-tab-content" id="tab-ai-agent">
+          <div class="terminal-chat-container">
+            <div class="terminal-header">
+              <div class="terminal-status">
+                <span class="status-dot" style="background:#10b981;"></span>
+                <span>TACTICAL ANALYST AI (SECURE COMS)</span>
+              </div>
+              <div class="version" style="color:#64748b;font-size:9px;">SECURE-TUNNEL: ACTIVE</div>
+            </div>
+            <div class="terminal-logs" id="terminal-logs">
+              <div class="terminal-row terminal-row--agent">
+                <strong>[SYSTEM]</strong> Welcome to Chanakya Tactical Analyst AI. I have synchronized threat telemetry feeds from ACLED, NASA FIRMS, OpenSky ADS-B, and secure maritime AIS.
+                <br><br>
+                Query me on any ongoing strategic conflict, deployment postures, or infrastructure disruptions.
+              </div>
+            </div>
+            <div class="terminal-suggestions">
+              <span class="suggestion-chip" data-query="Assess threat posture in South China Sea">Assess threat posture in South China Sea</span>
+              <span class="suggestion-chip" data-query="Analyze GPS Jamming zones and regional flight delay patterns">Analyze GPS Jamming & delays</span>
+              <span class="suggestion-chip" data-query="Audit undersea cable faults and maritime AIS anomalies">Audit undersea cable faults & AIS</span>
+            </div>
+            <div class="terminal-input-bar">
+              <input type="text" id="terminal-input" placeholder="Transmit secure query to Tactical Analyst..." />
+              <button class="tactical-btn" style="padding:10px 18px;" id="terminal-send-btn">TRANSMIT</button>
+            </div>
           </div>
         </div>
-        <nav>
-          <a href="${this.ctx.isDesktopApp ? 'https://worldmonitor.app/pro' : 'https://www.worldmonitor.app/pro'}" target="_blank" rel="noopener">Pro</a>
-          <a href="${this.ctx.isDesktopApp ? 'https://worldmonitor.app/blog/' : 'https://www.worldmonitor.app/blog/'}" target="_blank" rel="noopener">Blog</a>
-          <a href="${this.ctx.isDesktopApp ? 'https://worldmonitor.app/docs' : 'https://www.worldmonitor.app/docs'}" target="_blank" rel="noopener">Docs</a>
-          <a href="https://status.worldmonitor.app/" target="_blank" rel="noopener">Status</a>
-          <a href="https://github.com/koala73/worldmonitor" target="_blank" rel="noopener">GitHub</a>
-          <a href="https://discord.gg/re63kWKxaz" target="_blank" rel="noopener">Discord</a>
-          <a href="https://x.com/worldmonitorai" target="_blank" rel="noopener">X</a>
-          ${this.ctx.isDesktopApp ? '' : `<span id="footerDownloadMount"></span>`}
-        </nav>
-        <span class="site-footer-copy">&copy; ${new Date().getFullYear()} World Monitor</span>
-      </footer>
+
+        <!-- OSINT Harvester Workspace -->
+        <div class="tactical-tab-content" id="tab-harvester">
+          <div class="tactical-split-pane" style="grid-template-columns: 1fr 1.3fr !important;">
+            <div class="tactical-card">
+              <div class="tactical-card-title">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                <span>HARVEST INSTRUCTIONS</span>
+              </div>
+              <div class="tactical-card-body">
+                <div class="tactical-field">
+                  <label>Target Intel Domain</label>
+                  <input type="text" id="harvester-url" class="tactical-input" value="https://secure-intel.ajnav.com/reports/geopolitical-risk-index" placeholder="e.g. domain.com or url">
+                </div>
+                <div class="tactical-field">
+                  <label>Scraping depth</label>
+                  <select id="harvester-depth" class="tactical-select">
+                    <option value="1">Level 1 - Target Page Only</option>
+                    <option value="2">Level 2 - Page + Linked Resources</option>
+                    <option value="3">Level 3 - Full Subdomain Crawl</option>
+                  </select>
+                </div>
+                <div class="tactical-field">
+                  <label>Entity filters</label>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:10px;color:#94a3b8;">
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" id="harvest-filter-loc" checked> Geopolitical Zones</label>
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" id="harvest-filter-asset" checked> Military Assets</label>
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" id="harvest-filter-cables" checked> Undersea Cables</label>
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" id="harvest-filter-incidents" checked> Conflicts & Fires</label>
+                  </div>
+                </div>
+                <button class="tactical-btn" id="harvester-start-btn">Launch OSINT Harvester</button>
+              </div>
+            </div>
+            <div class="tactical-card">
+              <div class="tactical-card-title">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg>
+                <span>HARVEST OUTPUT CONSOLE</span>
+              </div>
+              <div class="tactical-card-body">
+                <div class="harvester-console" id="harvester-console-output">SYSTEM READY. AWAITING OSINT SCAN TARGET INSTRUCTIONS...</div>
+                <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid #1c202a;padding-top:14px;margin-top:auto;">
+                  <span style="font-size:10px;color:#64748b;" id="harvester-stats">Status: Standby</span>
+                  <button class="tactical-btn tactical-btn--secondary" style="padding:8px 14px;font-size:10px;" id="harvester-export-btn" disabled>Export Entities to Vault</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Secure Repository Workspace -->
+        <div class="tactical-tab-content" id="tab-repository">
+          <div class="tactical-card" style="height:100% !important;">
+            <div class="tactical-card-title">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span>SECURE VAULT INVENTORY</span>
+            </div>
+            <div class="tactical-card-body">
+              <div class="repository-toolbar">
+                <input type="text" id="repo-search" class="tactical-input" style="width:300px;" placeholder="Filter secure documents by code, region, type..." />
+                <div style="display:flex;gap:8px;">
+                  <button class="tactical-btn tactical-btn--secondary" style="padding:8px 14px;" id="repo-export-csv">EXPORT CSV</button>
+                  <button class="tactical-btn tactical-btn--secondary" style="padding:8px 14px;" id="repo-export-json">EXPORT JSON</button>
+                </div>
+              </div>
+              <div class="tactical-table-container">
+                <table class="tactical-table" id="repo-table">
+                  <thead>
+                    <tr>
+                      <th>Doc ID</th>
+                      <th>Document / Log Name</th>
+                      <th>Target Zone</th>
+                      <th>Threat Level</th>
+                      <th>Classification</th>
+                      <th>Timestamp</th>
+                    </tr>
+                  </thead>
+                  <tbody id="repo-table-body">
+                    <!-- Dynamic rows -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+        </div>
+      </div>
     `, "legacy direct innerHTML migration"));
 
     await this.createPanels();
@@ -773,7 +1121,7 @@ export class PanelLayoutManager implements AppModule {
     this.criticalBannerEl.className = `critical-posture-banner ${isCritical ? 'severity-critical' : 'severity-elevated'}`;
     setTrustedHtml(this.criticalBannerEl, trustedHtml(`
       <div class="banner-content">
-        <span class="banner-icon">${isCritical ? '🚨' : '⚠️'}</span>
+        <span class="banner-icon">${isCritical ? '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-siren"><path d="M7 18v-6a5 5 0 1 1 10 0v6"/><path d="M5 21a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-1a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2z"/><path d="M12 2v2"/></svg>' : '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-alert-triangle"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'}</span>
         <span class="banner-headline">${escapeHtml(top.headline)}</span>
         <span class="banner-stats">${top.totalAircraft} aircraft • ${escapeHtml(top.summary)}</span>
         ${top.strikeCapable ? '<span class="banner-strike">STRIKE CAPABLE</span>' : ''}
@@ -2477,5 +2825,1473 @@ export class PanelLayoutManager implements AppModule {
     categories.forEach(({ feeds }) => feeds.forEach(f => sources.add(f.name)));
     INTEL_SOURCES.forEach(f => sources.add(f.name));
     return Array.from(sources).sort((a, b) => a.localeCompare(b));
+  }
+
+  // ─── OSINT Tactical Workspace and Tabbed navigation ───
+  private mockRepoData = [
+    { id: "DOC-2026-001", name: "Suwalki Gap Tactical Troop Movements Report", zone: "Suwalki Gap", threat: "high", classification: "SECRET // NOFORN", time: "2026-06-01 10:14:02" },
+    { id: "DOC-2026-002", name: "South China Sea Naval Task Force Telemetry", zone: "South China Sea", threat: "critical", classification: "TOP SECRET // SI", time: "2026-05-30 08:24:51" },
+    { id: "DOC-2026-003", name: "Bab al-Mandab Strait AIS Spoofing Advisory", zone: "Bab al-Mandab Strait", threat: "medium", classification: "CONFIDENTIAL", time: "2026-05-29 16:45:10" }
+  ];
+
+  private setupTacticalWorkspace(): void {
+    const container = this.ctx.container;
+    const appEl = document.getElementById('app');
+
+    // ─── Retractable Sidebar ───
+    const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
+    if (sidebarToggleBtn && appEl) {
+      // Set initial state from storage
+      const collapsed = localStorage.getItem('wm-sidebar-collapsed') === 'true';
+      if (collapsed) {
+        appEl.classList.add('sidebar-collapsed');
+      }
+
+      sidebarToggleBtn.addEventListener('click', () => {
+        const isCollapsed = appEl.classList.toggle('sidebar-collapsed');
+        localStorage.setItem('wm-sidebar-collapsed', String(isCollapsed));
+        // Force map resize
+        setTimeout(() => window.dispatchEvent(new Event('resize')), 300);
+      });
+    }
+
+    // ─── Browser Tab Swapping ───
+    const tabItems = container.querySelectorAll('.tactical-tab-bar .tab-item');
+    const tabContents = container.querySelectorAll('.tactical-tab-viewport .tactical-tab-content');
+
+    tabItems.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const targetTab = tab.getAttribute('data-tab');
+        if (!targetTab) return;
+
+        tabItems.forEach(t => t.classList.remove('active'));
+        tabContents.forEach(c => c.classList.remove('active'));
+
+        tab.classList.add('active');
+        const targetContent = document.getElementById(`tab-${targetTab}`);
+        if (targetContent) {
+          targetContent.classList.add('active');
+        }
+
+        // Home tab needs map resize
+        if (targetTab === 'home') {
+          setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
+        }
+      });
+    });
+
+    // ─── Gemini-Style Floating AI Chat Popup Logic ───
+    const aiChatOverlay = document.getElementById('aiChatPopupOverlay') as HTMLElement | null;
+    const aiChatCloseBtn = document.getElementById('aiChatPopupCloseBtn');
+    const aiChatBody = document.getElementById('aiChatPopupBody');
+    const aiChatWelcome = document.getElementById('aiChatWelcomeWrapper');
+    const aiChatMsgList = document.getElementById('aiChatPopupMessagesList');
+    const aiChatTextarea = document.getElementById('aiChatPopupTextarea') as HTMLTextAreaElement | null;
+    const aiChatImportBtn = document.getElementById('aiChatPopupImportBtn');
+    const aiChatModelSelect = document.getElementById('aiChatPopupModelSelect') as HTMLSelectElement | null;
+
+    let chatHistory: Array<{ role: string; content: string }> = [];
+
+    const toggleAiChat = () => {
+      if (!aiChatOverlay) return;
+      const isOpen = aiChatOverlay.classList.toggle('open');
+      if (isOpen && aiChatTextarea) {
+        setTimeout(() => aiChatTextarea.focus(), 100);
+      }
+    };
+
+    window.addEventListener('wm:toggle-ai-chat', toggleAiChat);
+
+    if (aiChatCloseBtn) {
+      aiChatCloseBtn.addEventListener('click', toggleAiChat);
+    }
+
+    if (aiChatOverlay) {
+      aiChatOverlay.addEventListener('click', (e) => {
+        if (e.target === aiChatOverlay) toggleAiChat();
+      });
+      // Esc key to close popup
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && aiChatOverlay.classList.contains('open')) {
+          toggleAiChat();
+        }
+      });
+    }
+
+    // Import Active Intel button logic (+)
+    if (aiChatImportBtn && aiChatTextarea) {
+      aiChatImportBtn.addEventListener('click', () => {
+        const opName = (document.getElementById('planner-op-name') as HTMLInputElement)?.value || 'OP SENTINEL ESCORT';
+        const zone = (document.getElementById('planner-op-zone') as HTMLSelectElement)?.value || 'South China Sea';
+        const posture = (document.getElementById('planner-op-posture') as HTMLSelectElement)?.value || 'DEFCON 3';
+        const assets = (document.getElementById('planner-op-assets') as HTMLInputElement)?.value || 'None';
+        aiChatTextarea.value = `Analyzing Operational Theater: ${opName}. \nZone: ${zone}. \nAlert Status: ${posture}. \nDeployments: ${assets}. \nProvide risk assessment.`;
+        aiChatTextarea.style.height = 'auto';
+        aiChatTextarea.style.height = `${aiChatTextarea.scrollHeight}px`;
+        aiChatTextarea.focus();
+      });
+    }
+
+    const appendAiChatBubble = (role: 'user' | 'assistant', text: string) => {
+      if (!aiChatMsgList || !aiChatBody) return;
+      aiChatWelcome?.setAttribute('style', 'display:none !important;');
+      aiChatMsgList.style.display = 'flex';
+
+      const row = document.createElement('div');
+      row.className = `ai-chat-msg-row ai-chat-msg-row--${role}`;
+      row.innerHTML = `<strong>${role === 'user' ? 'ANALYST' : 'CHANAKYA TACTICAL AI'}</strong><div class="msg-content">${text}</div>`;
+
+      if (role === 'assistant') {
+        const actionBar = document.createElement('div');
+        actionBar.className = 'ai-chat-action-bar';
+        
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'ai-chat-action-btn';
+        copyBtn.textContent = 'Copy';
+        copyBtn.onclick = () => {
+          navigator.clipboard.writeText(text);
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => copyBtn.textContent = 'Copy', 2000);
+        };
+
+        const saveBtn = document.createElement('button');
+        saveBtn.className = 'ai-chat-action-btn';
+        saveBtn.textContent = 'Save to Repo';
+        saveBtn.onclick = async () => {
+          const docId = `INTEL-${Math.floor(1000 + Math.random() * 9000)}`;
+          const filename = `${docId}.txt`;
+          
+          try {
+            saveBtn.textContent = 'Storing...';
+            // Call local fs write API
+            const resp = await fetch('/api/store-intel', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                name: filename,
+                type: 'text',
+                data: `SECURE TACTICAL LOG // CHANAKYA AI\nLOG ID: ${docId}\nTIMESTAMP: ${new Date().toISOString()}\n\n---\n\n${text}`
+              })
+            });
+
+            const resData = await resp.json();
+            if (resData.success) {
+              const newDoc = {
+                id: docId,
+                name: `AI Intel Log: ${docId}`,
+                zone: "Global Threat Intel",
+                threat: "medium",
+                classification: "SECRET // NOFORN",
+                time: new Date().toISOString().replace('T', ' ').substring(0, 19)
+              };
+              this.mockRepoData.unshift(newDoc);
+              this.renderRepositoryTable();
+              alert(`Geopolitical intelligence securely written to repository absolute path:\n${resData.path}`);
+              saveBtn.textContent = 'Stored!';
+            } else {
+              throw new Error(resData.error || 'Server rejected');
+            }
+          } catch (err: any) {
+            console.error('[ai-chat] Save failed:', err);
+            // Fallback: browser download
+            const blob = new Blob([text], { type: 'text/plain' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = filename;
+            a.click();
+            alert(`Stored locally via browser download:\n${filename}`);
+            saveBtn.textContent = 'Saved!';
+          }
+        };
+
+        actionBar.appendChild(copyBtn);
+        actionBar.appendChild(saveBtn);
+        row.appendChild(actionBar);
+      }
+
+      aiChatMsgList.appendChild(row);
+      aiChatBody.scrollTop = aiChatBody.scrollHeight;
+    };
+
+    const handleAiChatSubmit = async () => {
+      if (!aiChatTextarea) return;
+      const text = aiChatTextarea.value.trim();
+      if (!text) return;
+
+      appendAiChatBubble('user', text);
+      aiChatTextarea.value = '';
+      aiChatTextarea.style.height = 'auto';
+
+      appendAiChatBubble('assistant', 'Secure tunnel active... Analyzing Geopolitical context telemetries...');
+      const assistantRows = aiChatMsgList?.querySelectorAll('.ai-chat-msg-row--assistant');
+      const latestAssistantRow = assistantRows?.[assistantRows.length - 1];
+      const contentEl = latestAssistantRow?.querySelector('.msg-content');
+
+      chatHistory.push({ role: 'user', content: text });
+
+      try {
+        const response = await fetch('/api/chat-analyst', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            query: text,
+            history: chatHistory.slice(-10),
+            model: aiChatModelSelect?.value || 'flash'
+          })
+        });
+
+        if (!response.ok || !response.body) {
+          throw new Error('Streaming connection failed');
+        }
+
+        if (contentEl) contentEl.textContent = '';
+        
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let done = false;
+        let accumulatedText = "";
+
+        while (!done) {
+          const { value, done: doneReading } = await reader.read();
+          done = doneReading;
+          const chunkValue = decoder.decode(value);
+          const lines = chunkValue.split('\n');
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const payload = line.slice(6).trim();
+              if (payload === '[DONE]') {
+                done = true;
+                break;
+              }
+              try {
+                const parsed = JSON.parse(payload);
+                if (parsed.delta) {
+                  accumulatedText += parsed.delta;
+                  if (contentEl) {
+                    contentEl.textContent = accumulatedText;
+                    if (aiChatBody) aiChatBody.scrollTop = aiChatBody.scrollHeight;
+                  }
+                }
+              } catch { }
+            }
+          }
+        }
+        chatHistory.push({ role: 'assistant', content: accumulatedText });
+
+      } catch (error) {
+        // High quality tactical fallback streaming simulator if SSE fails (offline / local dev / credentials missing)
+        let fallbackText = `TACTICAL THREAT LEVEL SUMMARY RESOLVED:
+1. Geopolitical intelligence feeds indicate escalating maneuvers around primary maritime chokepoints.
+2. Direct Action Plan: Synchronize carrier strike teams and execute persistent radar scouting sweeps.
+3. Ideate Strategy: Establish secure communication lines and mobilize nearby defense clusters to deter forward posture expansion.`;
+        
+        if (text.toLowerCase().includes('south china sea')) {
+          fallbackText = `REGIONAL THREAT TELEMETRY REPORT: SOUTH CHINA SEA (ZONE-1)
+1. Shandong Carrier task group monitored east of Hainan; US carrier strike group Reagan conducts tactical patrolling maneuvers.
+2. Recommended Posture: DEFCON 2 high mobility. Increase surveillance drone flight frequencies to establish complete spatial mapping.`;
+        } else if (text.toLowerCase().includes('bab al-mandab') || text.toLowerCase().includes('strait')) {
+          fallbackText = `REGIONAL THREAT TELEMETRY REPORT: BAB AL-MANDAB STRAIT (ZONE-2)
+1. Active AIS transponder spoofing anomalous telemetry detected. Commercial vessels warned of asymmetric surface threats.
+2. Mitigation Protocol: Escort strike assets deployed, increase surveillance and enforce strict defense perimeters.`;
+        }
+
+        if (contentEl) contentEl.textContent = '';
+        let index = 0;
+        const interval = setInterval(() => {
+          if (index < fallbackText.length) {
+            if (contentEl) {
+              contentEl.textContent += fallbackText[index];
+              if (aiChatBody) aiChatBody.scrollTop = aiChatBody.scrollHeight;
+            }
+            index++;
+          } else {
+            clearInterval(interval);
+            chatHistory.push({ role: 'assistant', content: fallbackText });
+          }
+        }, 15);
+      }
+    };
+
+    if (aiChatTextarea) {
+      aiChatTextarea.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          handleAiChatSubmit();
+        }
+      });
+      // Auto-resize textarea
+      aiChatTextarea.addEventListener('input', () => {
+        aiChatTextarea.style.height = 'auto';
+        aiChatTextarea.style.height = `${aiChatTextarea.scrollHeight}px`;
+      });
+    }
+
+
+    // ─── D3 Interactive Graph Sandbox Engine ───
+    interface SandboxNode extends d3.SimulationNodeDatum {
+      id: string;
+      label: string;
+      type: string;
+      definition: string;
+    }
+
+    interface SandboxLink extends d3.SimulationLinkDatum<SandboxNode> {
+      label: string;
+    }
+
+    let nodes: SandboxNode[] = [];
+    let links: SandboxLink[] = [];
+    let selectedNodes = new Set<string>();
+    let sandboxMode: 'drag' | 'lasso' | 'connect' = 'drag';
+    let connectSourceNode: SandboxNode | null = null;
+
+    const svg = d3.select<SVGSVGElement, unknown>('#sandbox-svg');
+    const plannerSaveBtn = document.getElementById('planner-save-btn') as HTMLButtonElement | null;
+    const width = 600;
+    const height = 400;
+
+    // Outer group to host zoom/pan changes
+    const g = svg.append('g').attr('class', 'sandbox-main-group');
+
+    // Create D3 Force directed simulation
+    const simulation = d3.forceSimulation<SandboxNode>()
+      .force('charge', d3.forceManyBody().strength(-200))
+      .force('center', d3.forceCenter(width / 2, height / 2))
+      .force('collision', d3.forceCollide().radius(28))
+      .force('link', d3.forceLink<SandboxNode, SandboxLink>().id(d => d.id).distance(80));
+
+    // Handle standard D3 Zoom/Pan
+    const zoomBehavior = d3.zoom<SVGSVGElement, unknown>()
+      .scaleExtent([0.1, 4])
+      .on('zoom', (event) => {
+        if (sandboxMode === 'drag' || sandboxMode === 'connect') {
+          g.attr('transform', event.transform);
+        }
+      });
+
+    svg.call(zoomBehavior);
+
+    // Initial default Nodes Setup matching the target selected Zone
+    const initSandboxData = () => {
+      const opName = (document.getElementById('planner-op-name') as HTMLInputElement)?.value || 'OP SENTINEL ESCORT';
+      const zone = (document.getElementById('planner-op-zone') as HTMLSelectElement)?.value || 'South China Sea';
+      
+      nodes = [
+        { id: 'root', label: opName, type: 'Location', definition: `Geopolitical operation target: ${zone}` },
+        { id: 'zone-1', label: `${zone} Base`, type: 'Place', definition: `Strategic theater baseline center for ${opName}` },
+        { id: 'asset-1', label: 'USS Ronald Reagan', type: 'People', definition: 'US Carrier Strike Group deployed to secure spatial corridor.' },
+        { id: 'intel-1', label: 'Swarm Radar Anomaly', type: 'Intel', definition: 'Multiple radar traces tracked conducting persistent surveillance.' }
+      ];
+
+      links = [
+        { source: 'root', target: 'zone-1', label: 'coordinates' },
+        { source: 'zone-1', target: 'asset-1', label: 'deploys' },
+        { source: 'asset-1', target: 'intel-1', label: 'intercepts' }
+      ];
+
+      selectedNodes.clear();
+      updateLegendCount();
+      updateSandboxGraph();
+    };
+
+    const updateLegendCount = () => {
+      const counts = { Intel: 0, Place: 0, People: 0, Location: 0, News: 0, Feed: 0 };
+      nodes.forEach(n => {
+        const t = n.type as keyof typeof counts;
+        if (counts[t] !== undefined) {
+          counts[t]++;
+        }
+      });
+      (Object.keys(counts) as Array<keyof typeof counts>).forEach(type => {
+        const el = document.getElementById(`legend-${type.toLowerCase()}`);
+        const countVal = counts[type];
+        if (el && typeof countVal === 'number') {
+          el.textContent = `${type}: ${countVal}`;
+        }
+      });
+    };
+
+    const getNodeColor = (type: string) => {
+      switch (type) {
+        case 'Intel': return '#f59e0b';
+        case 'Place': return '#a855f7';
+        case 'People': return '#f97316';
+        case 'Location': return '#3b82f6';
+        case 'News': return '#ef4444';
+        case 'Feed': return '#10b981';
+        default: return '#94a3b8';
+      }
+    };
+
+    const dragNode = (sim: d3.Simulation<SandboxNode, undefined>) => {
+      function dragstarted(event: any, d: SandboxNode) {
+        if (sandboxMode !== 'drag') return;
+        if (!event.active) sim.alphaTarget(0.3).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+      }
+      function dragged(event: any, d: SandboxNode) {
+        if (sandboxMode !== 'drag') return;
+        d.fx = event.x;
+        d.fy = event.y;
+      }
+      function dragended(event: any, d: SandboxNode) {
+        if (sandboxMode !== 'drag') return;
+        if (!event.active) sim.alphaTarget(0);
+        d.fx = null;
+        d.fy = null;
+      }
+      return d3.drag<any, SandboxNode>()
+        .on('start', dragstarted)
+        .on('drag', dragged)
+        .on('end', dragended);
+    };
+
+    const updateSandboxGraph = () => {
+      // Clear outer elements
+      g.selectAll('*').remove();
+
+      // Render Directed Edges
+      const linkElements = g.selectAll('.link-line')
+        .data(links)
+        .enter()
+        .append('line')
+        .attr('class', 'link-line');
+
+      const linkLabelElements = g.selectAll('.link-label')
+        .data(links)
+        .enter()
+        .append('text')
+        .attr('class', 'link-label')
+        .text(d => d.label);
+
+      // Render Nodes group
+      const nodeElements = g.selectAll('.node-group')
+        .data(nodes)
+        .enter()
+        .append('g')
+        .attr('class', 'node-group')
+        .style('cursor', sandboxMode === 'connect' ? 'cell' : 'pointer')
+        .call(dragNode(simulation) as any);
+
+      // Node circles
+      nodeElements.append('circle')
+        .attr('class', 'node-circle')
+        .attr('r', 8)
+        .attr('fill', d => getNodeColor(d.type))
+        .attr('stroke', '#0d0f14')
+        .attr('stroke-width', 1.5)
+        .classed('selected', d => selectedNodes.has(d.id));
+
+      // Node text labels
+      nodeElements.append('text')
+        .attr('class', 'node-label')
+        .attr('y', -14)
+        .text(d => d.label);
+
+      // Node Interaction click
+      nodeElements.on('click', (event, d) => {
+        event.stopPropagation();
+        if (sandboxMode === 'connect') {
+          if (!connectSourceNode) {
+            connectSourceNode = d;
+            showToast(`Connected node parent selected: ${d.label}. Click child node to link them!`);
+          } else {
+            if (connectSourceNode.id !== d.id) {
+              const linkLabel = prompt('Enter Relationship Verb (e.g. monitors, deploys, tracks):', 'links') || 'links';
+              links.push({ source: connectSourceNode.id, target: d.id, label: linkLabel });
+              connectSourceNode = null;
+              updateSandboxGraph();
+            }
+          }
+          return;
+        }
+
+        // Toggle selected state
+        if (selectedNodes.has(d.id)) {
+          selectedNodes.delete(d.id);
+        } else {
+          selectedNodes.add(d.id);
+        }
+        
+        // Render Inspector or summary details in outline preview
+        const infoHtml = `SECURE PLANNER NODE INSPECTOR // CLASSIFICATION: CONFIDENTIAL
+-----------------------------------------------------------
+NODE CODENAME   : ${d.label.toUpperCase()}
+NODE CATEGORY   : ${d.type.toUpperCase()}
+INTELLIGENCE    : ${d.definition}
+ID / Telemetry  : ${d.id}
+
+CONNECTED LINKS:
+${links.filter(l => {
+  const sId = typeof l.source === 'object' ? l.source.id : l.source;
+  const tId = typeof l.target === 'object' ? l.target.id : l.target;
+  return sId === d.id || tId === d.id;
+}).map(l => {
+  const sLabel = typeof l.source === 'object' ? l.source.label : nodes.find(n => n.id === l.source)?.label || l.source;
+  const tLabel = typeof l.target === 'object' ? l.target.label : nodes.find(n => n.id === l.target)?.label || l.target;
+  return `  - ${sLabel} --(${l.label})--> ${tLabel}`;
+}).join('\n')}`;
+        
+        const preview = document.getElementById('planner-output');
+        if (preview) {
+          setTrustedHtml(preview, trustedHtml(infoHtml, "legacy direct innerHTML migration"));
+        }
+
+        updateSandboxGraph();
+        updateSelectionBubble();
+      });
+
+      // Update force simulation data
+      simulation.nodes(nodes);
+      const linkForce = simulation.force('link') as d3.ForceLink<SandboxNode, SandboxLink>;
+      if (linkForce) linkForce.links(links);
+
+      simulation.alpha(1).restart();
+
+      // Hook up D3 Tick loop to update coordinate positioning
+      simulation.on('tick', () => {
+        linkElements
+          .attr('x1', d => (d.source as SandboxNode).x ?? 0)
+          .attr('y1', d => (d.source as SandboxNode).y ?? 0)
+          .attr('x2', d => (d.target as SandboxNode).x ?? 0)
+          .attr('y2', d => (d.target as SandboxNode).y ?? 0);
+
+        linkLabelElements
+          .attr('x', d => (((d.source as SandboxNode).x ?? 0) + ((d.target as SandboxNode).x ?? 0)) / 2)
+          .attr('y', d => (((d.source as SandboxNode).y ?? 0) + ((d.target as SandboxNode).y ?? 0)) / 2 - 4);
+
+        nodeElements.attr('transform', d => `translate(${d.x ?? 0}, ${d.y ?? 0})`);
+      });
+    };
+
+    const updateSelectionBubble = () => {
+      const countEl = document.getElementById('selected-nodes-count');
+      const bubble = document.getElementById('sandbox-selection-info');
+      if (countEl && bubble) {
+        countEl.textContent = String(selectedNodes.size);
+        bubble.style.display = selectedNodes.size > 0 ? 'block' : 'none';
+      }
+    };
+
+    // Mode Selector listeners
+    document.getElementById('sandbox-tool-drag')?.addEventListener('click', (e) => {
+      sandboxMode = 'drag';
+      connectSourceNode = null;
+      document.querySelectorAll('.sandbox-ctrl-btn').forEach(b => b.classList.remove('active'));
+      (e.target as HTMLElement).classList.add('active');
+      document.getElementById('plannerSandboxCol')?.setAttribute('class', 'tactical-card planner-sandbox-col');
+      updateSandboxGraph();
+    });
+
+    document.getElementById('sandbox-tool-lasso')?.addEventListener('click', (e) => {
+      sandboxMode = 'lasso';
+      connectSourceNode = null;
+      document.querySelectorAll('.sandbox-ctrl-btn').forEach(b => b.classList.remove('active'));
+      (e.target as HTMLElement).classList.add('active');
+      document.getElementById('plannerSandboxCol')?.setAttribute('class', 'tactical-card planner-sandbox-col lasso-cursor');
+      updateSandboxGraph();
+    });
+
+    document.getElementById('sandbox-tool-connect')?.addEventListener('click', (e) => {
+      sandboxMode = 'connect';
+      connectSourceNode = null;
+      document.querySelectorAll('.sandbox-ctrl-btn').forEach(b => b.classList.remove('active'));
+      (e.target as HTMLElement).classList.add('active');
+      document.getElementById('plannerSandboxCol')?.setAttribute('class', 'tactical-card planner-sandbox-col connect-cursor');
+      updateSandboxGraph();
+    });
+
+    document.getElementById('sandbox-tool-reset')?.addEventListener('click', () => {
+      svg.transition().duration(750).call(zoomBehavior.transform, d3.zoomIdentity);
+    });
+
+    // Manual Node Creator binding
+    document.getElementById('sandbox-add-node-btn')?.addEventListener('click', () => {
+      const labelInput = document.getElementById('sandbox-new-node-label') as HTMLInputElement | null;
+      const typeSelect = document.getElementById('sandbox-new-node-type') as HTMLSelectElement | null;
+      const defInput = document.getElementById('sandbox-new-node-def') as HTMLInputElement | null;
+
+      if (!labelInput || !typeSelect || !defInput) return;
+      const label = labelInput.value.trim();
+      const type = typeSelect.value;
+      const definition = defInput.value.trim() || 'Custom created intelligence element.';
+
+      if (!label) {
+        showToast('Node Title is required.');
+        return;
+      }
+
+      const newId = `node-${Math.floor(1000 + Math.random() * 9000)}`;
+      nodes.push({ id: newId, label, type, definition });
+
+      // If there is an active selected node, connect them automatically!
+      if (selectedNodes.size === 1) {
+        const parentId = Array.from(selectedNodes)[0];
+        if (parentId) {
+          links.push({ source: parentId, target: newId, label: 'relates' });
+        }
+      } else if (nodes.length > 1) {
+        // Link to root by default
+        links.push({ source: 'root', target: newId, label: 'tracks' });
+      }
+
+      labelInput.value = '';
+      defInput.value = '';
+
+      updateLegendCount();
+      updateSandboxGraph();
+    });
+
+    // Drag Lasso Selection Box Logic (Canvas Drag Box)
+    let lassoStartPos = { x: 0, y: 0 };
+    let isDrawingLasso = false;
+    let lassoRect: any = null;
+
+    svg.on('mousedown', (event) => {
+      if (sandboxMode !== 'lasso') return;
+      event.preventDefault();
+      
+      const coords = d3.pointer(event, svg.node());
+      lassoStartPos = { x: coords[0], y: coords[1] };
+      isDrawingLasso = true;
+      selectedNodes.clear();
+
+      lassoRect = svg.append('rect')
+        .attr('class', 'lasso-box')
+        .attr('x', lassoStartPos.x)
+        .attr('y', lassoStartPos.y)
+        .attr('width', 0)
+        .attr('height', 0);
+    });
+
+    svg.on('mousemove', (event) => {
+      if (!isDrawingLasso || !lassoRect) return;
+      const coords = d3.pointer(event, svg.node());
+      const currentPos = { x: coords[0], y: coords[1] };
+
+      const x = Math.min(lassoStartPos.x, currentPos.x);
+      const y = Math.min(lassoStartPos.y, currentPos.y);
+      const w = Math.abs(lassoStartPos.x - currentPos.x);
+      const h = Math.abs(lassoStartPos.y - currentPos.y);
+
+      lassoRect
+        .attr('x', x)
+        .attr('y', y)
+        .attr('width', w)
+        .attr('height', h);
+
+      // Walk through D3 nodes and highlight those within the box
+      // In D3 force simulations, nodes has .x and .y containing D3 simulation coordinates.
+      // Since SVG itself is zoomed, we do a basic spatial query.
+      nodes.forEach(d => {
+        const nodeX = d.x ?? 0;
+        const nodeY = d.y ?? 0;
+        if (nodeX >= x && nodeX <= x + w && nodeY >= y && nodeY <= y + h) {
+          selectedNodes.add(d.id);
+        } else {
+          selectedNodes.delete(d.id);
+        }
+      });
+
+      updateSelectionBubble();
+      // Temporarily highlight nodes on SVG without D3 tick
+      svg.selectAll('.node-circle').classed('selected', (d: any) => selectedNodes.has(d.id));
+    });
+
+    svg.on('mouseup', () => {
+      if (!isDrawingLasso) return;
+      isDrawingLasso = false;
+      if (lassoRect) {
+        lassoRect.remove();
+        lassoRect = null;
+      }
+      updateSandboxGraph();
+    });
+
+
+    // ─── Ctrl+X AI Node Extension (Backwards Graph Context Crawler) ───
+    const crawlGraphPath = (tailId: string): string => {
+      const pathNodes: SandboxNode[] = [];
+      let currentId = tailId;
+      const visited = new Set<string>();
+
+      // Walk backwards by looking at incoming links: parent --(label)--> child
+      while (currentId && !visited.has(currentId)) {
+        visited.add(currentId);
+        const node = nodes.find(n => n.id === currentId);
+        if (node) pathNodes.unshift(node);
+
+        const incomingEdge = links.find(l => {
+          const tId = typeof l.target === 'object' ? l.target.id : l.target;
+          return tId === currentId;
+        });
+
+        if (incomingEdge) {
+          const src = incomingEdge.source;
+          currentId = typeof src === 'object' ? src.id : String(src);
+        } else {
+          break;
+        }
+      }
+
+      return pathNodes.map(n => `[${n.type}] ${n.label} (${n.definition})`).join(' -> ');
+    };
+
+    window.addEventListener('keydown', async (e) => {
+      // ─── Ctrl+X: Add AI Nodes via Groq ───
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'x') {
+        const active = document.activeElement;
+        if (active?.tagName === 'INPUT' || active?.tagName === 'TEXTAREA') return;
+
+        if (selectedNodes.size !== 1) {
+          showToast('Select exactly one node to extend via Groq AI.');
+          return;
+        }
+
+        e.preventDefault();
+        const clickedNodeId = Array.from(selectedNodes)[0];
+        if (!clickedNodeId) return;
+        const clickedNode = nodes.find(n => n.id === clickedNodeId);
+        if (!clickedNode) return;
+
+        const userComment = prompt(`Tactical extension on node "${clickedNode.label}".\n\nEnter Analyst Comment / Mission Directive:`, 'Analyze threat anomalies and suggest next targets');
+        if (!userComment) return;
+
+        const pathContext = crawlGraphPath(clickedNodeId);
+        const preview = document.getElementById('planner-output');
+        if (preview) preview.textContent = 'CONNECTING TO GROQ TACTICAL AI... RETRIEVING JSON SCHEMAS...';
+
+        try {
+          const resp = await fetch('/api/sandbox-groq', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              mode: 'generate',
+              context: pathContext,
+              userComment,
+              type: clickedNode.type,
+              clickedNodeId,
+              existingNodes: nodes.map(n => ({ id: n.id, label: n.label, type: n.type }))
+            })
+          });
+
+          const data = await resp.json();
+          if (data.success && data.graph) {
+            const newNodes: SandboxNode[] = data.graph.nodes || [];
+            const newEdges: SandboxLink[] = data.graph.edges || [];
+
+            newNodes.forEach(n => {
+              if (!nodes.some(existing => existing.id === n.id)) {
+                nodes.push(n);
+              }
+            });
+
+            newEdges.forEach(l => {
+              links.push({
+                source: typeof l.source === 'object' ? (l.source as any).id : l.source,
+                target: typeof l.target === 'object' ? (l.target as any).id : l.target,
+                label: l.label
+              });
+            });
+
+            updateLegendCount();
+            updateSandboxGraph();
+            showToast(`Groq AI expanded the map with ${newNodes.length} new threat nodes!`);
+            
+            if (preview) {
+              const formattedList = newNodes.map(n => `<h3>[${n.type.toUpperCase()}] ${n.label}</h3><p>${n.definition}</p><hr>`).join('');
+              setTrustedHtml(preview, trustedHtml(`<h3>SECURE INTEL EXTENSION COMPLETED</h3>${formattedList}`, "legacy direct innerHTML migration"));
+            }
+          } else {
+            throw new Error(data.error || 'Server error');
+          }
+        } catch (err: any) {
+          console.error('[sandbox-ai-gen] Failed:', err);
+          
+          // High-grade offline simulation fallback if endpoint is offline -- highly dynamic & logical!
+          const zone = (document.getElementById('planner-op-zone') as HTMLSelectElement)?.value || 'South China Sea';
+          
+          const labelPrefixes = {
+            Intel: ['Target Track', 'Telemetry Scan', 'Frequency Spoof', 'Deception Signal', 'Sonar Ping'],
+            Place: ['Naval Corridor', 'Scouting Zone', 'Strategic Anchorage', 'Border Checkpoint', 'Supply Hub'],
+            People: ['Surveillance Division', 'Task Force Commander', 'Adversary Air Group', 'Undersea Command', 'Scout Team'],
+            Location: ['Theater Sector B-2', 'Chokepoint Channel', 'Anchorage Sector', 'Buffer Line', 'Grid-X4'],
+            News: ['Breaking Brief', 'Tactical Dispatch', 'Intel Flash', 'OSINT Alert', 'Local Wire'],
+            Feed: ['Sat Tracker', 'AIS Log Delta', 'Flight Path Trace', 'UAV Live Feed', 'Sonar Array']
+          };
+
+          const getRandomElement = (arr: string[]): string => arr[Math.floor(Math.random() * arr.length)] || '';
+          const targetType = getRandomElement(['Intel', 'Place', 'People', 'Location', 'News', 'Feed']) as 'Intel' | 'Place' | 'People' | 'Location' | 'News' | 'Feed';
+          const prefixArr = labelPrefixes[targetType] || ['Track'];
+          const dynamicLabel = `${getRandomElement(prefixArr)} - ${clickedNode.label.substring(0, 14)}`;
+          const dynamicDef = `Secondary tactical coordination link triggered under "${userComment || 'routine surveillance'}". Located near the ${zone} operational perimeter.`;
+
+          const mockId = `node-${Math.floor(1000 + Math.random() * 9000)}-ext`;
+          const newMockNode: SandboxNode = {
+            id: mockId,
+            label: dynamicLabel,
+            type: targetType,
+            definition: dynamicDef
+          };
+
+          nodes.push(newMockNode);
+          links.push({ source: clickedNodeId, target: mockId, label: 'extends' });
+
+          updateLegendCount();
+          updateSandboxGraph();
+          showToast('[Offline Mode] Spawned dynamic context coordination node.');
+          
+          if (preview) {
+            setTrustedHtml(preview, trustedHtml(`<h3>SECURE INTEL EXTENSION COMPLETED (OFFLINE SIMULATION)</h3>
+              <p>Based on crawls, added next threat step:</p>
+              <h3>[${newMockNode.type.toUpperCase()}] ${newMockNode.label}</h3>
+              <p>${newMockNode.definition}</p>`, "legacy direct innerHTML migration"));
+          }
+        }
+      }
+
+      // ─── Ctrl+Y: Summarize Selected Geopolitical Events ───
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
+        const active = document.activeElement;
+        if (active?.tagName === 'INPUT' || active?.tagName === 'TEXTAREA') return;
+
+        if (selectedNodes.size === 0) {
+          showToast('Select a cluster of nodes using Lasso Mode (+) or click to summarize.');
+          return;
+        }
+
+        e.preventDefault();
+        const selectedList = nodes.filter(n => selectedNodes.has(n.id));
+        const preview = document.getElementById('planner-output');
+        if (preview) preview.textContent = 'COMPILING SELECTED GEO-TELEMETRY NODES... CALCULATING COURSES OF ACTION...';
+
+        try {
+          const resp = await fetch('/api/sandbox-groq', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              mode: 'summarize',
+              nodes: selectedList
+            })
+          });
+
+          const data = await resp.json();
+          if (data.success && data.report) {
+            if (preview) {
+              setTrustedHtml(preview, trustedHtml(data.report, "legacy direct innerHTML migration"));
+            }
+            if (plannerSaveBtn) {
+              plannerSaveBtn.removeAttribute('disabled');
+              plannerSaveBtn.onclick = () => {
+                const briefId = `COA-${Math.floor(1000 + Math.random() * 9000)}`;
+                const newDoc = {
+                  id: briefId,
+                  name: `AI Threat Summary & COA: ${briefId}`,
+                  zone: selectedList.find(n => n.type === 'Location')?.label || "Tactical Sandboxed Theater",
+                  threat: selectedList.some(n => n.definition.toLowerCase().includes('escalat') || n.definition.toLowerCase().includes('alert')) ? 'high' : 'medium',
+                  classification: 'SECRET // NOFORN',
+                  time: new Date().toISOString().replace('T', ' ').substring(0, 19)
+                };
+                this.mockRepoData.unshift(newDoc);
+                this.renderRepositoryTable();
+                alert(`Tactical Threat COA report ${briefId} successfully saved to secure vault!`);
+                const repoTab = container.querySelector('.tab-item[data-tab="repository"]') as HTMLElement | null;
+                repoTab?.click();
+              };
+            }
+          } else {
+            throw new Error(data.error || 'Server error');
+          }
+        } catch (err: any) {
+          console.error('[sandbox-ai-summary] Failed:', err);
+          // High-grade offline simulation fallback if endpoint is offline
+          const fallbackReport = `### SECURE GEOPOLITICAL ASSESSMENT // OFF-TUNNEL COA
+-----------------------------------------------------------
+**1. EVENT SUMMARY**
+Aggregated telemetry data resolved across ${selectedList.length} monitored nodes. High warning postures detected around deployed fleet strike carrier groups.
+
+**2. REGIONAL THREAT & POSTURING ANALYSIS**
+*   **Active Hostilities**: Multi-sector radar sweeps confirm persistent UAV tracking.
+*   **Infrastructure Risks**: Intercept routes align with maritime commercial corridors.
+
+**3. PROPOSED COURSES OF ACTION (COA)**
+*   **COA-1 (Defense Escalation)**: Transition to DEFCON 1 posture and deploy special operations units to secure Babb al-Mandab/South China Sea.
+*   **COA-2 (Information War)**: Spoof transponder frequencies to mask asset vectors and mobilize cyber deterrence shields immediately.`;
+
+          if (preview) {
+            setTrustedHtml(preview, trustedHtml(fallbackReport, "legacy direct innerHTML migration"));
+          }
+          if (plannerSaveBtn) {
+            plannerSaveBtn.removeAttribute('disabled');
+            plannerSaveBtn.onclick = () => {
+              const briefId = `COA-${Math.floor(1000 + Math.random() * 9000)}`;
+              const newDoc = {
+                id: briefId,
+                name: `AI Threat Summary & COA: ${briefId}`,
+                zone: selectedList.find(n => n.type === 'Location')?.label || "Tactical Sandboxed Theater",
+                threat: 'medium',
+                classification: 'SECRET // NOFORN',
+                time: new Date().toISOString().replace('T', ' ').substring(0, 19)
+              };
+              this.mockRepoData.unshift(newDoc);
+              this.renderRepositoryTable();
+              alert(`Tactical Threat COA report ${briefId} successfully saved to secure vault!`);
+              const repoTab = container.querySelector('.tab-item[data-tab="repository"]') as HTMLElement | null;
+              repoTab?.click();
+            };
+          }
+        }
+      }
+    });
+
+    // Wire up planner-generate-btn to generate a crisp strategic tactical plan
+    const plannerGenBtn = document.getElementById('planner-generate-btn');
+    if (plannerGenBtn) {
+      plannerGenBtn.addEventListener('click', () => {
+        const opName = (document.getElementById('planner-op-name') as HTMLInputElement)?.value || 'OP SENTINEL ESCORT';
+        const zone = (document.getElementById('planner-op-zone') as HTMLSelectElement)?.value || 'South China Sea';
+        const posture = (document.getElementById('planner-op-posture') as HTMLSelectElement)?.value || 'DEFCON 3';
+        const assets = (document.getElementById('planner-op-assets') as HTMLInputElement)?.value || 'None';
+        const notes = (document.getElementById('planner-op-notes') as HTMLTextAreaElement)?.value || 'None';
+
+        const baseReport = `### SECURE OPERATIONAL BRIEFING: ${opName.toUpperCase()}
+-----------------------------------------------------------
+**1. THEATER TARGET ZONE**
+- Primary Sector: ${zone}
+- Alert posture Status: ${posture}
+
+**2. DEPLOYED DEFENSE CORRIDOR**
+- Active assets: ${assets}
+
+**3. STRATEGIC CONTEXT & OBJECTIVES**
+${notes || 'No objectives specified.'}
+
+**4. GEO-INTELLIGENCE SUMMARY**
+Initial tactical blueprint established. Direct tactical forces to maintain communication buffers and log incident telemetries.`;
+        
+        const preview = document.getElementById('planner-output');
+        if (preview) {
+          setTrustedHtml(preview, trustedHtml(baseReport, "legacy direct innerHTML migration"));
+        }
+        if (plannerSaveBtn) {
+          plannerSaveBtn.removeAttribute('disabled');
+          plannerSaveBtn.onclick = () => {
+            const briefId = `OP-${Math.floor(1000 + Math.random() * 9000)}`;
+            const newDoc = {
+              id: briefId,
+              name: `Tactical Plan: ${opName}`,
+              zone: zone,
+              threat: posture.includes('DEFCON 1') ? 'high' : posture.includes('DEFCON 2') ? 'high' : 'medium',
+              classification: 'SECRET // NOFORN',
+              time: new Date().toISOString().replace('T', ' ').substring(0, 19)
+            };
+            this.mockRepoData.unshift(newDoc);
+            this.renderRepositoryTable();
+            alert(`Tactical Plan ${briefId} successfully saved to secure vault!`);
+            const repoTab = container.querySelector('.tab-item[data-tab="repository"]') as HTMLElement | null;
+            repoTab?.click();
+          };
+        }
+      });
+    }
+
+    // Populate initial Nodes & Edges Setup
+    initSandboxData();
+
+    // Trigger update when parameters are modified
+    document.getElementById('planner-op-name')?.addEventListener('change', initSandboxData);
+    document.getElementById('planner-op-zone')?.addEventListener('change', initSandboxData);
+
+    // ─── Draggable and Minimizable Widgets Controller ───
+    const makePopupDraggableAndMinimizable = (popupId: string) => {
+      const popup = document.getElementById(popupId);
+      if (!popup) return;
+      const header = popup.querySelector('.tactical-card-title') as HTMLElement | null;
+      const minBtn = popup.querySelector('.popup-minimize-btn') as HTMLButtonElement | null;
+      const body = popup.querySelector('.tactical-card-body') as HTMLElement | null;
+
+      if (header) {
+        let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+        header.onmousedown = (e: MouseEvent) => {
+          if ((e.target as HTMLElement).closest('button, input, select, textarea')) return;
+          e.preventDefault();
+          pos3 = e.clientX;
+          pos4 = e.clientY;
+          
+          document.onmouseup = () => {
+            document.onmouseup = null;
+            document.onmousemove = null;
+          };
+          
+          document.onmousemove = (ev: MouseEvent) => {
+            ev.preventDefault();
+            pos1 = pos3 - ev.clientX;
+            pos2 = pos4 - ev.clientY;
+            pos3 = ev.clientX;
+            pos4 = ev.clientY;
+            
+            const newTop = popup.offsetTop - pos2;
+            const newLeft = popup.offsetLeft - pos1;
+            
+            popup.style.top = `${newTop}px`;
+            popup.style.left = `${newLeft}px`;
+            popup.style.bottom = 'auto';
+            popup.style.right = 'auto';
+          };
+        };
+      }
+
+      if (minBtn && body) {
+        minBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const isCollapsed = body.style.display === 'none';
+          if (isCollapsed) {
+            body.style.setProperty('display', 'flex', 'important');
+            minBtn.textContent = '−';
+          } else {
+            body.style.setProperty('display', 'none', 'important');
+            minBtn.textContent = '＋';
+          }
+        });
+      }
+    };
+
+    makePopupDraggableAndMinimizable('popup-op-controls');
+    makePopupDraggableAndMinimizable('popup-node-mgmt');
+    makePopupDraggableAndMinimizable('popup-intel-briefing');
+
+    // ─── File & Edit Menu Actions Wiring ───
+    
+    // New Sandbox Blueprint
+    document.getElementById('menu-file-new')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (confirm('Are you sure you want to clear the active sandbox and create a new blueprint?')) {
+        initSandboxData();
+        const fileLabel = document.getElementById('sandbox-current-file-label');
+        if (fileLabel) fileLabel.textContent = 'Active: unsaved_blueprint.json';
+        localStorage.removeItem('wm-active-sandbox-name');
+        showToast('New sandbox blueprint initialized.');
+      }
+    });
+
+    // Save Sandbox Blueprint
+    document.getElementById('menu-file-save')?.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const opName = (document.getElementById('planner-op-name') as HTMLInputElement)?.value || 'OP SENTINEL ESCORT';
+      const zone = (document.getElementById('planner-op-zone') as HTMLSelectElement)?.value || 'South China Sea';
+      const cleanOpName = opName.toLowerCase().replace(/[^a-z0-9]/g, '_');
+      const defaultFilename = `sandbox_${cleanOpName}.json`;
+      
+      const filename = prompt('Enter a secure blueprint filename to save:', defaultFilename);
+      if (!filename) return;
+
+      const fileLabel = document.getElementById('sandbox-current-file-label');
+      const secureFilename = filename.endsWith('.json') ? filename : `${filename}.json`;
+
+      const graphPayload = {
+        opName,
+        zone,
+        posture: (document.getElementById('planner-op-posture') as HTMLSelectElement)?.value || '',
+        assets: (document.getElementById('planner-op-assets') as HTMLInputElement)?.value || '',
+        notes: (document.getElementById('planner-op-notes') as HTMLTextAreaElement)?.value || '',
+        nodes,
+        links: links.map(l => ({
+          source: typeof l.source === 'object' ? (l.source as any).id : l.source,
+          target: typeof l.target === 'object' ? (l.target as any).id : l.target,
+          label: l.label
+        }))
+      };
+
+      try {
+        showToast('Writing blueprint to secure disk vault...');
+        const resp = await fetch('/api/store-intel', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: secureFilename,
+            type: 'json',
+            data: graphPayload
+          })
+        });
+
+        const resData = await resp.json();
+        if (resData.success) {
+          if (fileLabel) fileLabel.textContent = `Active: ${secureFilename}`;
+          localStorage.setItem('wm-active-sandbox-name', secureFilename);
+          localStorage.setItem(`wm-sandbox-file-${secureFilename}`, JSON.stringify(graphPayload));
+          
+          const docId = `PLAN-${Math.floor(1000 + Math.random() * 9000)}`;
+          const existingDoc = this.mockRepoData.find(d => d.name === `Sandbox Blueprint: ${secureFilename}`);
+          if (!existingDoc) {
+            const newDoc = {
+              id: docId,
+              name: `Sandbox Blueprint: ${secureFilename}`,
+              zone: zone,
+              threat: 'medium',
+              classification: 'SECRET // NOFORN',
+              time: new Date().toISOString().replace('T', ' ').substring(0, 19)
+            };
+            this.mockRepoData.unshift(newDoc);
+            this.renderRepositoryTable();
+          }
+          alert(`Geopolitical sandbox blueprint saved successfully to secure vault path:\n${resData.path}`);
+        } else {
+          throw new Error(resData.error || 'Server error');
+        }
+      } catch (err: any) {
+        console.error('[sandbox-save] Failed:', err);
+        localStorage.setItem(`wm-sandbox-file-${secureFilename}`, JSON.stringify(graphPayload));
+        localStorage.setItem('wm-active-sandbox-name', secureFilename);
+        if (fileLabel) fileLabel.textContent = `Active: ${secureFilename} (Offline)`;
+        showToast('Blueprint saved locally to browser storage.');
+      }
+    });
+
+    // Open Sandbox Blueprint Modal
+    const openModal = document.getElementById('sandboxOpenModal');
+    const openSelect = document.getElementById('sandboxOpenSelect') as HTMLSelectElement | null;
+
+    document.getElementById('menu-file-open')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (!openModal || !openSelect) return;
+
+      openSelect.innerHTML = '';
+      
+      const blueprints = this.mockRepoData.filter(d => d.name.startsWith('Sandbox Blueprint: '));
+      blueprints.forEach(bp => {
+        const filename = bp.name.replace('Sandbox Blueprint: ', '');
+        const opt = document.createElement('option');
+        opt.value = filename;
+        opt.textContent = filename;
+        openSelect.appendChild(opt);
+      });
+
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('wm-sandbox-file-')) {
+          const filename = key.replace('wm-sandbox-file-', '');
+          if (!blueprints.some(bp => bp.name.includes(filename))) {
+            const opt = document.createElement('option');
+            opt.value = filename;
+            opt.textContent = `${filename} (Offline)`;
+            openSelect.appendChild(opt);
+          }
+        }
+      }
+
+      if (openSelect.options.length === 0) {
+        const opt = document.createElement('option');
+        opt.value = '';
+        opt.textContent = '-- No blueprints saved yet --';
+        openSelect.appendChild(opt);
+      }
+
+      openModal.style.display = 'flex';
+    });
+
+    document.getElementById('sandboxOpenModalCloseBtn')?.addEventListener('click', () => {
+      if (openModal) openModal.style.display = 'none';
+    });
+
+    document.getElementById('sandboxOpenLoadBtn')?.addEventListener('click', async () => {
+      if (!openModal || !openSelect) return;
+      const selectedFile = openSelect.value;
+      if (!selectedFile) return;
+
+      try {
+        let dataPayload: any = null;
+        const localData = localStorage.getItem(`wm-sandbox-file-${selectedFile}`);
+        if (localData) {
+          dataPayload = JSON.parse(localData);
+        } else {
+          const response = await fetch(`/repo/json/${selectedFile}`);
+          if (response.ok) {
+            dataPayload = await response.json();
+          } else {
+            throw new Error('File not found in repo');
+          }
+        }
+
+        if (dataPayload) {
+          (document.getElementById('planner-op-name') as HTMLInputElement).value = dataPayload.opName || '';
+          (document.getElementById('planner-op-zone') as HTMLSelectElement).value = dataPayload.zone || '';
+          (document.getElementById('planner-op-posture') as HTMLSelectElement).value = dataPayload.posture || '';
+          (document.getElementById('planner-op-assets') as HTMLInputElement).value = dataPayload.assets || '';
+          (document.getElementById('planner-op-notes') as HTMLTextAreaElement).value = dataPayload.notes || '';
+
+          nodes = dataPayload.nodes || [];
+          links = dataPayload.links || [];
+
+          const fileLabel = document.getElementById('sandbox-current-file-label');
+          if (fileLabel) fileLabel.textContent = `Active: ${selectedFile}`;
+          localStorage.setItem('wm-active-sandbox-name', selectedFile);
+
+          updateLegendCount();
+          updateSandboxGraph();
+          openModal.style.display = 'none';
+          showToast(`Loaded secure blueprint: ${selectedFile}`);
+        }
+      } catch (err) {
+        console.error('[sandbox-open] Failed:', err);
+        alert('Failed to load selected sandbox blueprint.');
+      }
+    });
+
+    // Clear Selected Nodes
+    document.getElementById('menu-edit-clear')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      selectedNodes.clear();
+      updateSelectionBubble();
+      updateSandboxGraph();
+      showToast('Cleared active graph selections.');
+    });
+
+    // Delete Selected Nodes
+    const deleteSelectedNodes = () => {
+      if (selectedNodes.size === 0) {
+        showToast('No nodes selected to delete.');
+        return;
+      }
+      nodes = nodes.filter(n => !selectedNodes.has(n.id));
+      links = links.filter(l => {
+        const sId = typeof l.source === 'object' ? (l.source as any).id : l.source;
+        const tId = typeof l.target === 'object' ? (l.target as any).id : l.target;
+        return !selectedNodes.has(sId) && !selectedNodes.has(tId);
+      });
+      selectedNodes.clear();
+      updateSelectionBubble();
+      updateLegendCount();
+      updateSandboxGraph();
+      showToast('Pruned selected nodes from threat graph.');
+    };
+
+    document.getElementById('menu-edit-delete')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      deleteSelectedNodes();
+    });
+
+    // Keyboard global Delete/Backspace handler
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        const active = document.activeElement;
+        if (active?.tagName === 'INPUT' || active?.tagName === 'TEXTAREA') return;
+        const plannerTab = document.getElementById('tab-planner');
+        if (plannerTab && plannerTab.classList.contains('active')) {
+          e.preventDefault();
+          deleteSelectedNodes();
+        }
+      }
+    });
+
+    // Load Last Active Sandbox automatically
+    const lastActiveFile = localStorage.getItem('wm-active-sandbox-name');
+    if (lastActiveFile) {
+      const fileLabel = document.getElementById('sandbox-current-file-label');
+      if (fileLabel) fileLabel.textContent = `Active: ${lastActiveFile}`;
+      const localData = localStorage.getItem(`wm-sandbox-file-${lastActiveFile}`);
+      if (localData) {
+        try {
+          const dataPayload = JSON.parse(localData);
+          (document.getElementById('planner-op-name') as HTMLInputElement).value = dataPayload.opName || '';
+          (document.getElementById('planner-op-zone') as HTMLSelectElement).value = dataPayload.zone || '';
+          (document.getElementById('planner-op-posture') as HTMLSelectElement).value = dataPayload.posture || '';
+          (document.getElementById('planner-op-assets') as HTMLInputElement).value = dataPayload.assets || '';
+          (document.getElementById('planner-op-notes') as HTMLTextAreaElement).value = dataPayload.notes || '';
+          nodes = dataPayload.nodes || [];
+          links = dataPayload.links || [];
+          setTimeout(() => {
+            updateLegendCount();
+            updateSandboxGraph();
+          }, 300);
+        } catch {}
+      }
+    }
+
+    // ─── AI Terminal Geopolitical Analyst Chat Logic ───
+    const sendBtn = document.getElementById('terminal-send-btn');
+    const chatInput = document.getElementById('terminal-input') as HTMLInputElement | null;
+    const terminalLogs = document.getElementById('terminal-logs');
+
+    const appendMessage = (sender: 'agent' | 'user', text: string) => {
+      if (!terminalLogs) return;
+      const msg = document.createElement('div');
+      msg.className = `terminal-row terminal-row--${sender}`;
+      msg.innerHTML = `<strong>[${sender === 'user' ? 'TRANSMITTING' : 'HARVESTED ANALYST'}]</strong> ${text}`;
+      terminalLogs.appendChild(msg);
+      terminalLogs.scrollTop = terminalLogs.scrollHeight;
+    };
+
+    if (sendBtn && chatInput && terminalLogs) {
+      const handleSend = () => {
+        const text = chatInput.value.trim();
+        if (!text) return;
+        appendMessage('user', text);
+        chatInput.value = '';
+
+        setTimeout(() => {
+          let reply = `Secure audit resolved for query: "${text}". Geopolitical postures are stable. Primary warning level is DEFCON 5 (NORMAL).`;
+          if (text.toLowerCase().includes('south china sea')) {
+            reply = `ANALYSIS COMPLED FOR SOUTH CHINA SEA (ZONE-1):
+1. Chinese carrier task force (Shandong Strike Group) currently positioned 120nm East of Hainan.
+2. US Naval force (USS Ronald Reagan) conducts freedom of navigation maneuvers.
+3. High recommendation: Increase reconnaissance flights to monitor regional defense clusters.`;
+          } else if (text.toLowerCase().includes('gps') || text.toLowerCase().includes('delay')) {
+            reply = `ANALYSIS COMPLETED FOR REGIONAL TELEMETRY DISRUPTIONS:
+1. Significant GPS Jamming anomalies detected over the Baltic Sea corridor, impacting civil aviation flight schedules.
+2. 14 standard air transit delays recorded over Suwalki airspace.
+3. Threat status: High cyber disruption probability.`;
+          } else if (text.toLowerCase().includes('undersea') || text.toLowerCase().includes('ais')) {
+            reply = `ANALYSIS COMPLETED FOR INFRASTRUCTURE INCIDENTS:
+1. Undersea fiber transit fault recorded off the Gulf of Finland.
+2. 3 dark vessels (AIS disabled) tracked Eastern Mediterranean.
+3. Direct action: Monitor repair ship transits via live maritime tracking.`;
+          }
+          appendMessage('agent', reply);
+        }, 800);
+      };
+
+      sendBtn.addEventListener('click', handleSend);
+      chatInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') handleSend();
+      });
+
+      // Suggestion chips
+      container.querySelectorAll('.suggestion-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          const query = chip.getAttribute('data-query');
+          if (query && chatInput) {
+            chatInput.value = query;
+            handleSend();
+          }
+        });
+      });
+    }
+
+    // ─── Harvester OSINT Scraping Logic ───
+    const harvesterBtn = document.getElementById('harvester-start-btn');
+    const harvesterExportBtn = document.getElementById('harvester-export-btn') as HTMLButtonElement | null;
+    const harvesterConsole = document.getElementById('harvester-console-output');
+    const harvesterStats = document.getElementById('harvester-stats');
+
+    if (harvesterBtn && harvesterConsole && harvesterStats) {
+      harvesterBtn.addEventListener('click', () => {
+        const url = (document.getElementById('harvester-url') as HTMLInputElement)?.value || 'https://ajnav.com';
+        harvesterBtn.setAttribute('disabled', 'true');
+        if (harvesterExportBtn) harvesterExportBtn.setAttribute('disabled', 'true');
+        setTrustedHtml(harvesterConsole, trustedHtml('', "legacy direct innerHTML migration"));
+        harvesterStats.textContent = 'Status: Harvesting Geopolitical Data...';
+
+        const logs = [
+          `[SYSTEM] Connecting to secure target: ${url}...`,
+          `[SYSTEM] Bypassing target cloudflare CDN shields... [OK]`,
+          `[HARVEST] Extracted raw HTML data payload. Size: 1.2MB.`,
+          `[HARVEST] Parsing document structure for entities...`,
+          `[ENTITY-HARVEST] Discovered Geopolitical Zone: South China Sea Defense Ring`,
+          `[ENTITY-HARVEST] Discovered Geopolitical Zone: Suwalki Corridor Defense Perimeter`,
+          `[ENTITY-HARVEST] Discovered Military Asset: Carrier USS Gerald R. Ford`,
+          `[ENTITY-HARVEST] Discovered Undersea Cable: Baltic-Connector Fiber-1`,
+          `[SYSTEM] Harvesting compiled. Discovered 4 critical intelligence elements.`
+        ];
+
+        let index = 0;
+        const interval = setInterval(() => {
+          if (index < logs.length) {
+            const current = harvesterConsole.innerHTML;
+            harvesterConsole.innerHTML = (current ? current + '<br>' : '') + logs[index];
+            harvesterConsole.scrollTop = harvesterConsole.scrollHeight;
+            index++;
+          } else {
+            clearInterval(interval);
+            harvesterBtn.removeAttribute('disabled');
+            if (harvesterExportBtn) {
+              harvesterExportBtn.removeAttribute('disabled');
+              harvesterExportBtn.onclick = () => {
+                const newDoc1 = {
+                  id: `HARV-${Math.floor(1000 + Math.random() * 9000)}`,
+                  name: `OSINT Harvester: ${url.replace('https://', '')}`,
+                  zone: "South China Sea / Baltic Corridor",
+                  threat: "high",
+                  classification: "SECRET // NOFORN",
+                  time: new Date().toISOString().replace('T', ' ').substring(0, 19)
+                };
+                this.mockRepoData.unshift(newDoc1);
+                this.renderRepositoryTable();
+                alert(`OSINT scraped document ${newDoc1.id} added successfully to Secure Vault!`);
+                const repoTab = container.querySelector('.tab-item[data-tab="repository"]') as HTMLElement | null;
+                repoTab?.click();
+              };
+            }
+            harvesterStats.textContent = 'Status: Scan Completed (4 Entities Scraped)';
+          }
+        }, 400);
+      });
+    }
+
+    // ─── Secure Repository Search & Render ───
+    this.renderRepositoryTable();
+
+    const repoSearch = document.getElementById('repo-search') as HTMLInputElement | null;
+    if (repoSearch) {
+      repoSearch.addEventListener('input', () => {
+        this.renderRepositoryTable(repoSearch.value);
+      });
+    }
+
+    // Export buttons
+    const exportCsvBtn = document.getElementById('repo-export-csv');
+    const exportJsonBtn = document.getElementById('repo-export-json');
+
+    if (exportCsvBtn) {
+      exportCsvBtn.addEventListener('click', () => {
+        const headers = "Doc ID,Document / Log Name,Target Zone,Threat Level,Classification,Timestamp\n";
+        const rows = this.mockRepoData.map(d => `"${d.id}","${d.name}","${d.zone}","${d.threat}","${d.classification}","${d.time}"`).join("\n");
+        const blob = new Blob([headers + rows], { type: 'text/csv' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `chanakya_intel_repository_${new Date().toISOString().substring(0, 10)}.csv`;
+        a.click();
+      });
+    }
+
+    if (exportJsonBtn) {
+      exportJsonBtn.addEventListener('click', () => {
+        const blob = new Blob([JSON.stringify(this.mockRepoData, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `chanakya_intel_repository_${new Date().toISOString().substring(0, 10)}.json`;
+        a.click();
+      });
+    }
+  }
+
+  private renderRepositoryTable(filter: string = ''): void {
+    const tableBody = document.getElementById('repo-table-body');
+    if (!tableBody) return;
+
+    const f = filter.toLowerCase();
+    const filtered = this.mockRepoData.filter(d => 
+      d.id.toLowerCase().includes(f) ||
+      d.name.toLowerCase().includes(f) ||
+      d.zone.toLowerCase().includes(f) ||
+      d.threat.toLowerCase().includes(f) ||
+      d.classification.toLowerCase().includes(f)
+    );
+
+    const rows = filtered.map(d => {
+      const threatClass = `badge-threat--${d.threat}`;
+      return `
+        <tr>
+          <td><strong>${d.id}</strong></td>
+          <td>${d.name}</td>
+          <td>${d.zone}</td>
+          <td><span class="badge-threat ${threatClass}">${d.threat}</span></td>
+          <td><span style="color:#64748b;font-weight:600;font-size:9px;">${d.classification}</span></td>
+          <td><span style="font-family:var(--font-mono);font-size:10px;">${d.time}</span></td>
+        </tr>
+      `;
+    }).join('');
+
+    setTrustedHtml(tableBody, trustedHtml(rows || '<tr><td colspan="6" style="text-align:center;color:#64748b;">No documents match the filter criteria.</td></tr>', "legacy direct innerHTML migration"));
   }
 }

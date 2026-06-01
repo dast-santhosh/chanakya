@@ -37,7 +37,7 @@ import { validateBearerToken } from '../../server/auth-session';
 import { getReferralCodeForUser, buildShareUrl } from '../../server/_shared/referral-code';
 
 const PUBLIC_BASE =
-  process.env.WORLDMONITOR_PUBLIC_BASE_URL ?? 'https://worldmonitor.app';
+  process.env.WORLDMONITOR_PUBLIC_BASE_URL ?? 'https://ajnav.com';
 
 /**
  * Bind the Clerk-derived share code to the userId in Convex so that
@@ -67,7 +67,7 @@ async function registerReferralCodeInConvex(userId: string, code: string): Promi
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${relaySecret}`,
-      'User-Agent': 'worldmonitor-edge/1.0',
+      'User-Agent': 'chanakya-edge/1.0',
     },
     body: JSON.stringify({ userId, code }),
     signal: AbortSignal.timeout(5000),

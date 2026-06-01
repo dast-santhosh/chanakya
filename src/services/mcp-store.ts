@@ -22,7 +22,7 @@ export interface McpPreset {
 export const MCP_PRESETS: McpPreset[] = [
   {
     name: 'Exa Search',
-    icon: '🔍',
+    icon: 'EXA',
     description: 'Real-time web search with clean, LLM-ready content from top results',
     serverUrl: 'https://mcp.exa.ai/mcp',
     authNote: 'Requires Authorization: Bearer <EXA_API_KEY> (free tier at exa.ai)',
@@ -33,7 +33,7 @@ export const MCP_PRESETS: McpPreset[] = [
   },
   {
     name: 'Tavily Search',
-    icon: '🕵️',
+    icon: 'TAV',
     description: 'AI-optimized web search with source citations and real-time answers',
     serverUrl: 'https://mcp.tavily.com/mcp/',
     authNote: 'Requires Authorization: Bearer <TAVILY_API_KEY> (free tier at tavily.com)',
@@ -44,7 +44,7 @@ export const MCP_PRESETS: McpPreset[] = [
   },
   {
     name: 'Perigon News',
-    icon: '📰',
+    icon: 'NEWS',
     description: 'Real-time global news search with journalist, company, and topic filters',
     serverUrl: 'https://mcp.perigon.io/v1/mcp',
     authNote: 'Requires Authorization: Bearer <PERIGON_API_KEY> (from perigon.io)',
@@ -55,7 +55,7 @@ export const MCP_PRESETS: McpPreset[] = [
   },
   {
     name: 'Robtex',
-    icon: '🛡️',
+    icon: 'NET',
     description: 'Free DNS intelligence, IP reputation, BGP routing, and network threat data',
     serverUrl: 'https://mcp.robtex.com/mcp',
     defaultTool: 'ip_reputation',
@@ -64,7 +64,7 @@ export const MCP_PRESETS: McpPreset[] = [
   },
   {
     name: 'Pyth Price Feeds',
-    icon: '📡',
+    icon: 'PYTH',
     description: 'Free real-time price feeds for crypto, equities, and FX from Pyth Network',
     serverUrl: 'https://mcp.pyth.network/mcp',
     defaultTool: 'get_latest_price',
@@ -73,7 +73,7 @@ export const MCP_PRESETS: McpPreset[] = [
   },
   {
     name: 'LunarCrush',
-    icon: '🌙',
+    icon: 'SENT',
     description: 'Crypto and stock social sentiment — mentions, engagement, and influencer signals',
     serverUrl: 'https://lunarcrush.ai/mcp',
     authNote: 'Requires Authorization: Bearer <LUNARCRUSH_API_KEY> (from lunarcrush.com)',
@@ -84,7 +84,7 @@ export const MCP_PRESETS: McpPreset[] = [
   },
   {
     name: 'Weather Forensics',
-    icon: '🌦️',
+    icon: 'WEAT',
     description: 'Free historical and current weather data — hourly, daily, and severe events',
     serverUrl: 'https://weatherforensics.dev/mcp/free',
     defaultTool: 'noaa_ncei_daily_weather_for_location_date',
@@ -93,7 +93,7 @@ export const MCP_PRESETS: McpPreset[] = [
   },
   {
     name: 'Alpha Vantage',
-    icon: '📉',
+    icon: 'MKT',
     description: 'Stocks, forex, crypto, and commodities — real-time and historical market data',
     serverUrl: 'https://mcp.alphavantage.co/mcp',
     authNote: 'Requires Authorization: Bearer <ALPHA_VANTAGE_API_KEY> (free at alphavantage.co)',
@@ -104,7 +104,7 @@ export const MCP_PRESETS: McpPreset[] = [
   },
   {
     name: 'GitHub',
-    icon: '🐙',
+    icon: 'GIT',
     description: 'Your repos, issues, PRs, pull requests, and code reviews',
     serverUrl: 'https://api.githubcopilot.com/mcp/',
     authNote: 'Requires Authorization: Bearer <GITHUB_TOKEN>',
@@ -115,7 +115,7 @@ export const MCP_PRESETS: McpPreset[] = [
   },
   {
     name: 'Slack',
-    icon: '💬',
+    icon: 'COMM',
     description: 'Your team channels, messages, and workspace activity',
     serverUrl: 'https://mcp.slack.com/mcp',
     authNote: 'Requires Authorization: Bearer <SLACK_BOT_TOKEN> (xoxb-...)',
@@ -126,7 +126,7 @@ export const MCP_PRESETS: McpPreset[] = [
   },
   {
     name: 'Cloudflare Radar',
-    icon: '🌐',
+    icon: 'RADR',
     description: 'Live internet traffic, outages, BGP anomalies, and attack trends',
     serverUrl: 'https://radar.mcp.cloudflare.com/sse',
     authNote: 'Requires Authorization: Bearer <CF_API_TOKEN> (from Cloudflare dashboard)',
@@ -137,7 +137,7 @@ export const MCP_PRESETS: McpPreset[] = [
   },
   {
     name: 'Google Maps',
-    icon: '🗺️',
+    icon: 'MAPS',
     description: 'Location search, place details, directions, and geocoding',
     serverUrl: 'https://mapstools.googleapis.com/mcp',
     authNote: 'Requires X-Goog-Api-Key: <GOOGLE_MAPS_API_KEY>',
@@ -148,7 +148,7 @@ export const MCP_PRESETS: McpPreset[] = [
   },
   {
     name: 'PostgreSQL',
-    icon: '🗄️',
+    icon: 'DB',
     description: 'Query any PostgreSQL database you own or have access to',
     serverUrl: 'https://your-pg-mcp-server.example.com/mcp',
     authNote: 'Self-hosted — replace URL with your own PostgreSQL MCP server',
@@ -158,7 +158,7 @@ export const MCP_PRESETS: McpPreset[] = [
   },
   {
     name: 'Browser Fetch',
-    icon: '📄',
+    icon: 'WEB',
     description: 'Fetch and read any public URL as plain text or markdown via Cloudflare Browser Rendering',
     serverUrl: 'https://browser.mcp.cloudflare.com/mcp',
     authNote: 'Requires Authorization: Bearer <CF_API_TOKEN> (from Cloudflare dashboard)',
@@ -169,7 +169,7 @@ export const MCP_PRESETS: McpPreset[] = [
   },
   {
     name: 'Linear',
-    icon: '📋',
+    icon: 'LIN',
     description: 'Your issues, projects, cycles, and team roadmap',
     serverUrl: 'https://mcp.linear.app/mcp',
     authNote: 'Requires Authorization: Bearer <LINEAR_API_KEY>',
@@ -180,7 +180,7 @@ export const MCP_PRESETS: McpPreset[] = [
   },
   {
     name: 'Sentry',
-    icon: '🐛',
+    icon: 'ERR',
     description: 'Live error rates, recent exceptions, and release health',
     serverUrl: 'https://mcp.sentry.dev/mcp',
     authNote: 'Requires Authorization: Bearer <SENTRY_AUTH_TOKEN>',
@@ -191,7 +191,7 @@ export const MCP_PRESETS: McpPreset[] = [
   },
   {
     name: 'Datadog',
-    icon: '📈',
+    icon: 'DD',
     description: 'Metrics, monitors, dashboards, and infrastructure alerts',
     serverUrl: 'https://mcp.datadoghq.com/api/unstable/mcp-server/mcp',
     authNote: 'Requires DD-API-KEY: <KEY> and DD-APPLICATION-KEY: <KEY> headers (from Datadog → Organization Settings → API Keys)',
@@ -201,7 +201,7 @@ export const MCP_PRESETS: McpPreset[] = [
   },
   {
     name: 'Stripe',
-    icon: '💳',
+    icon: 'PAY',
     description: 'Revenue, charges, subscriptions, and payment activity',
     serverUrl: 'https://mcp.stripe.com/',
     authNote: 'Requires Authorization: Bearer <STRIPE_SECRET_KEY>',
@@ -212,7 +212,7 @@ export const MCP_PRESETS: McpPreset[] = [
   },
   {
     name: 'Notion',
-    icon: '📝',
+    icon: 'NOT',
     description: 'Search and query your Notion databases, pages, and notes',
     serverUrl: 'https://mcp.notion.com/mcp',
     authNote: 'Requires Authorization: Bearer <NOTION_INTEGRATION_TOKEN>',
@@ -223,7 +223,7 @@ export const MCP_PRESETS: McpPreset[] = [
   },
   {
     name: 'Airtable',
-    icon: '🏗️',
+    icon: 'TAB',
     description: 'Query records from any Airtable base you own',
     serverUrl: 'https://mcp.airtable.com/mcp',
     authNote: 'Requires Authorization: Bearer <AIRTABLE_PERSONAL_ACCESS_TOKEN>',
@@ -234,7 +234,7 @@ export const MCP_PRESETS: McpPreset[] = [
   },
   {
     name: 'Data Commons',
-    icon: '🌍',
+    icon: 'GOV',
     description: 'Google\'s open knowledge graph — global stats on health, economy, demographics, and more',
     serverUrl: 'https://api.datacommons.org/mcp',
     authNote: 'Requires x-api-key: <API_KEY> (free at console.cloud.google.com)',

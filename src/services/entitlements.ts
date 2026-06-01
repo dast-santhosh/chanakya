@@ -7,7 +7,7 @@
  * is not configured or ConvexClient is unavailable.
  */
 
-import { getConvexClient, getConvexApi, waitForConvexAuth } from './convex-client';
+
 
 export interface EntitlementState {
   planKey: string;
@@ -30,10 +30,23 @@ export interface EntitlementState {
   validUntil: number;
 }
 
+const MOCK_PRO_STATE: EntitlementState = {
+  planKey: 'pro',
+  features: {
+    tier: 2,
+    apiAccess: true,
+    apiRateLimit: 100,
+    maxDashboards: 100,
+    prioritySupport: true,
+    exportFormats: ['csv', 'json'],
+    mcpAccess: true,
+  },
+  validUntil: Number.MAX_SAFE_INTEGER,
+};
+
 // Module-level state
-let currentState: EntitlementState | null = null;
+let currentState: EntitlementState | null = MOCK_PRO_STATE;
 const listeners = new Set<(state: EntitlementState | null) => void>();
-let initialized = false;
 let unsubscribeFn: (() => void) | null = null;
 
 /**
@@ -42,51 +55,7 @@ let unsubscribeFn: (() => void) | null = null;
  * Failures are logged but never thrown (dashboard must not break).
  */
 export async function initEntitlementSubscription(_userId?: string): Promise<void> {
-  if (initialized) return;
-
-  try {
-    const client = await getConvexClient();
-    if (!client) {
-      console.log('[entitlements] No VITE_CONVEX_URL — skipping Convex subscription');
-      return;
-    }
-
-    const api = await getConvexApi();
-    if (!api) {
-      console.log('[entitlements] Could not load Convex API — skipping subscription');
-      return;
-    }
-
-    // Wait for Convex to confirm auth before subscribing. Otherwise the first
-    // getEntitlementsForUser snapshot runs unauthenticated and returns
-    // FREE_TIER_DEFAULTS, which can race with the post-payment panel gating
-    // decision (the UI renders as free before the auth-ready pro snapshot
-    // arrives). Unauthenticated visitors time out after 10s and we skip the
-    // subscription entirely — they don't need entitlement updates.
-    const authed = await waitForConvexAuth(10_000);
-    if (!authed) {
-      console.log('[entitlements] Convex auth not established — skipping subscription');
-      return;
-    }
-
-    const watch = client.onUpdate(
-      api.entitlements.getEntitlementsForUser,
-      {},
-      (result: EntitlementState | null) => {
-        currentState = result;
-        for (const cb of listeners) cb(result);
-      },
-      (err: Error) => {
-        console.warn('[entitlements] Subscription query error:', err.message);
-      },
-    );
-
-    unsubscribeFn = watch.unsubscribe;
-    initialized = true;
-  } catch (err) {
-    console.error('[entitlements] Failed to initialize Convex subscription:', err);
-    // Do not rethrow — entitlement service failure must not break the dashboard
-  }
+  // Bypassed
 }
 
 /**
@@ -103,7 +72,6 @@ export function destroyEntitlementSubscription(): void {
   }
   // Keep listeners intact — PanelLayout registers them once and expects them
   // to survive auth transitions. Only the Convex transport is torn down.
-  initialized = false;
 }
 
 /**

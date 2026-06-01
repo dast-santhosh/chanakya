@@ -178,7 +178,7 @@ async function main() {
 // import this module to exercise extractFunctions/scanBalanced in isolation,
 // and running main() on import would trigger process.exit from the test
 // process.
-const isMain = process.argv[1] && import.meta.url.endsWith(process.argv[1].replace(/^file:\/\//, ''));
+const isMain = process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1]);
 if (isMain) {
   main().catch((err) => {
     console.error('verify-seed-envelope-parity: unexpected error', err);

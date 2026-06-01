@@ -22,7 +22,7 @@ import { getCorsHeaders, isDisallowedOrigin } from './_cors.js';
 import { validateBearerToken } from '../server/auth-session';
 import { getEntitlements } from '../server/_shared/entitlement-check';
 
-const RELAY_BASE = 'https://proxy.worldmonitor.app';
+const RELAY_BASE = 'https://proxy.ajnav.com';
 const WIDGET_AGENT_KEY = process.env.WIDGET_AGENT_KEY ?? '';
 const PRO_WIDGET_KEY = process.env.PRO_WIDGET_KEY ?? '';
 const WORLDMONITOR_VALID_KEY_SET = new Set(
@@ -163,7 +163,7 @@ export default async function handler(req: Request): Promise<Response> {
   // ── Build relay headers (server-side keys, never exposed to browser) ──────
   const relayHeaders: Record<string, string> = {
     'Content-Type': 'application/json',
-    'User-Agent': 'worldmonitor-widget-edge/1.0',
+    'User-Agent': 'chanakya-widget-edge/1.0',
     ...(WIDGET_AGENT_KEY ? { 'X-Widget-Key': WIDGET_AGENT_KEY } : {}),
   };
   if (isPro && PRO_WIDGET_KEY) {

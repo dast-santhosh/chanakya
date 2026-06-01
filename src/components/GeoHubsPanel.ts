@@ -5,20 +5,20 @@ import { t } from '@/services/i18n';
 import { getCSSColor } from '@/utils';
 
 const COUNTRY_FLAGS: Record<string, string> = {
-  'USA': '🇺🇸', 'Russia': '🇷🇺', 'China': '🇨🇳', 'UK': '🇬🇧', 'Belgium': '🇧🇪',
-  'Israel': '🇮🇱', 'Iran': '🇮🇷', 'Ukraine': '🇺🇦', 'Taiwan': '🇹🇼', 'Japan': '🇯🇵',
-  'South Korea': '🇰🇷', 'North Korea': '🇰🇵', 'India': '🇮🇳', 'Saudi Arabia': '🇸🇦',
-  'Turkey': '🇹🇷', 'France': '🇫🇷', 'Germany': '🇩🇪', 'Egypt': '🇪🇬', 'Pakistan': '🇵🇰',
-  'Palestine': '🇵🇸', 'Yemen': '🇾🇪', 'Syria': '🇸🇾', 'Lebanon': '🇱🇧',
-  'Sudan': '🇸🇩', 'Ethiopia': '🇪🇹', 'Myanmar': '🇲🇲', 'Austria': '🇦🇹',
-  'International': '🌐',
+  'USA': 'US', 'Russia': 'RU', 'China': 'CN', 'UK': 'UK', 'Belgium': 'BE',
+  'Israel': 'IL', 'Iran': 'IR', 'Ukraine': 'UA', 'Taiwan': 'TW', 'Japan': 'JP',
+  'South Korea': 'KR', 'North Korea': 'KP', 'India': 'IN', 'Saudi Arabia': 'SA',
+  'Turkey': 'TR', 'France': 'FR', 'Germany': 'DE', 'Egypt': 'EG', 'Pakistan': 'PK',
+  'Palestine': 'PS', 'Yemen': 'YE', 'Syria': 'SY', 'Lebanon': 'LB',
+  'Sudan': 'SD', 'Ethiopia': 'ET', 'Myanmar': 'MM', 'Austria': 'AT',
+  'International': 'INT',
 };
 
 const TYPE_ICONS: Record<string, string> = {
-  capital: '🏛️',
-  conflict: '⚔️',
-  strategic: '⚓',
-  organization: '🏢',
+  capital: '',
+  conflict: '',
+  strategic: '',
+  organization: '',
 };
 
 const TYPE_LABELS: Record<string, string> = {
@@ -57,11 +57,11 @@ export class GeoHubsPanel extends Panel {
   }
 
   private getFlag(country: string): string {
-    return COUNTRY_FLAGS[country] || '🌐';
+    return COUNTRY_FLAGS[country] || 'INT';
   }
 
   private getTypeIcon(type: string): string {
-    return TYPE_ICONS[type] || '📍';
+    return TYPE_ICONS[type] || '';
   }
 
   private getTypeLabel(type: string): string {

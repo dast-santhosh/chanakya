@@ -75,7 +75,7 @@ export async function renderStoryToCanvas(data: StoryData): Promise<HTMLCanvasEl
   ctx.fillStyle = '#666';
   ctx.font = '700 30px Inter, system-ui, sans-serif';
   ctx.letterSpacing = '6px';
-  ctx.fillText('WORLDMONITOR.APP', textX, y + 26);
+  ctx.fillText('AJNAV.COM', textX, y + 26);
   ctx.letterSpacing = '0px';
   const dateStr = new Date().toLocaleDateString(getLocale(), { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
   ctx.font = '400 24px Inter, system-ui, sans-serif';
@@ -198,10 +198,10 @@ export async function renderStoryToCanvas(data: StoryData): Promise<HTMLCanvasEl
 
     y += 48;
     const sigItems = [
-      { icon: '📢', label: 'Protests', count: data.signals.protests, color: '#f97316' },
-      { icon: '✈', label: 'Military Aircraft', count: data.signals.militaryFlights, color: '#ef4444' },
-      { icon: '⚓', label: 'Military Vessels', count: data.signals.militaryVessels, color: '#3b82f6' },
-      { icon: '🌐', label: 'Internet Outages', count: data.signals.outages, color: '#8b5cf6' },
+      { label: 'Protests', count: data.signals.protests, color: '#f97316' },
+      { label: 'Military Aircraft', count: data.signals.militaryFlights, color: '#ef4444' },
+      { label: 'Military Vessels', count: data.signals.militaryVessels, color: '#3b82f6' },
+      { label: 'Internet Outages', count: data.signals.outages, color: '#8b5cf6' },
     ].filter(s => s.count > 0);
 
     const colW = (RIGHT - PAD) / Math.min(sigItems.length, 4);
@@ -212,7 +212,7 @@ export async function renderStoryToCanvas(data: StoryData): Promise<HTMLCanvasEl
       ctx.fillText(`${sig.count}`, sx, y);
       ctx.fillStyle = '#aaa';
       ctx.font = '400 20px Inter, system-ui, sans-serif';
-      ctx.fillText(`${sig.icon} ${sig.label}`, sx, y + 28);
+      ctx.fillText(`${sig.label}`, sx, y + 28);
     }
     y += 28;
   }
@@ -331,9 +331,9 @@ export async function renderStoryToCanvas(data: StoryData): Promise<HTMLCanvasEl
     y += 48;
     ctx.font = '400 28px Inter, system-ui, sans-serif';
     ctx.fillStyle = '#bbb';
-    ctx.fillText(`✈ ${data.theater.totalAircraft} aircraft`, PAD, y);
-    const acW = ctx.measureText(`✈ ${data.theater.totalAircraft} aircraft`).width;
-    ctx.fillText(`⚓ ${data.theater.totalVessels} vessels`, PAD + acW + 40, y);
+    ctx.fillText(`${data.theater.totalAircraft} aircraft`, PAD, y);
+    const acW = ctx.measureText(`${data.theater.totalAircraft} aircraft`).width;
+    ctx.fillText(`${data.theater.totalVessels} vessels`, PAD + acW + 40, y);
 
     if (data.theater.fighters || data.theater.tankers || data.theater.awacs) {
       y += 40;
@@ -350,7 +350,7 @@ export async function renderStoryToCanvas(data: StoryData): Promise<HTMLCanvasEl
       y += 40;
       ctx.fillStyle = '#ef4444';
       ctx.font = '700 24px Inter, system-ui, sans-serif';
-      ctx.fillText('⚠ STRIKE CAPABLE', PAD, y);
+      ctx.fillText('STRIKE CAPABLE', PAD, y);
     }
   }
 
@@ -438,7 +438,7 @@ export async function renderStoryToCanvas(data: StoryData): Promise<HTMLCanvasEl
   ctx.fillStyle = '#444';
   ctx.font = '600 24px Inter, system-ui, sans-serif';
   ctx.letterSpacing = '2px';
-  ctx.fillText('WORLDMONITOR.APP', footerTextX, H - 55);
+  ctx.fillText('AJNAV.COM', footerTextX, H - 55);
   ctx.letterSpacing = '0px';
   ctx.font = '400 20px Inter, system-ui, sans-serif';
   ctx.fillText('Real-time global intelligence monitoring', footerTextX, H - 30);

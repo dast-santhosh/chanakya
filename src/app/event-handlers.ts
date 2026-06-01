@@ -66,7 +66,6 @@ import { mlWorker } from '@/services/ml-worker';
 import { UnifiedSettings } from '@/components/UnifiedSettings';
 import { WM_OPEN_NOTIFICATIONS_FOR_COUNTRY } from '@/utils/notify-country-link';
 import { AuthLauncher } from '@/components/AuthLauncher';
-import { AuthHeaderWidget } from '@/components/AuthHeaderWidget';
 import { t } from '@/services/i18n';
 import { TvModeController } from '@/services/tv-mode';
 import { getAuthState, subscribeAuthState } from '@/services/auth-state';
@@ -114,6 +113,7 @@ export class EventHandlerManager implements AppModule {
   private boundWidgetModifyHandler: ((e: Event) => void) | null = null;
   private boundUndoHandler: ((e: KeyboardEvent) => void) | null = null;
   private boundNotifyForCountryHandler: ((e: Event) => void) | null = null;
+  private boundGlobalKeysHandler: ((e: KeyboardEvent) => void) | null = null;
   private proGateUnsubscribers: Array<() => void> = [];
   private closedPanelStack: string[] = []; // max-items: 20
   private idleTimeoutId: ReturnType<typeof setTimeout> | null = null;
@@ -329,6 +329,10 @@ export class EventHandlerManager implements AppModule {
       document.removeEventListener('keydown', this.boundUndoHandler);
       this.boundUndoHandler = null;
     }
+    if (this.boundGlobalKeysHandler) {
+      document.removeEventListener('keydown', this.boundGlobalKeysHandler);
+      this.boundGlobalKeysHandler = null;
+    }
     if (this.boundNotifyForCountryHandler) {
       window.removeEventListener(
         WM_OPEN_NOTIFICATIONS_FOR_COUNTRY,
@@ -480,6 +484,22 @@ export class EventHandlerManager implements AppModule {
       }
     };
     document.addEventListener('keydown', this.boundUndoHandler);
+
+    // Global tactical hotkeys (Alt+F, Alt+P)
+    this.boundGlobalKeysHandler = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement)?.tagName ?? '';
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || (e.target as HTMLElement)?.isContentEditable) return;
+      
+      if (e.altKey && e.key.toLowerCase() === 'f') {
+        e.preventDefault();
+        openSearch();
+      }
+      if (e.altKey && e.key.toLowerCase() === 'p') {
+        e.preventDefault();
+        window.dispatchEvent(new CustomEvent('wm:toggle-ai-chat'));
+      }
+    };
+    document.addEventListener('keydown', this.boundGlobalKeysHandler);
 
     const isLocalDev = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
     this.ctx.container.querySelectorAll<HTMLAnchorElement>('.variant-option').forEach(link => {
@@ -1168,17 +1188,9 @@ export class EventHandlerManager implements AppModule {
   setupAuthWidget(): void {
     const modal = new AuthLauncher();
     this.ctx.authModal = modal;
-
-    // The settings gear is rendered once by the standalone unifiedSettings
-    // button (#unifiedSettingsMount), which is mounted regardless of auth state
-    // (so signed-out users keep it too). Passing onSettingsClick here makes
-    // AuthHeaderWidget render a second gear next to the avatar for signed-in
-    // users — a duplicate. Leave it unset.
-    const widget = new AuthHeaderWidget(() => modal.open());
-    this.ctx.authHeaderWidget = widget;
     const mount = document.getElementById('authWidgetMount');
     if (mount) {
-      mount.appendChild(widget.getElement());
+      mount.style.display = 'none';
     }
   }
 

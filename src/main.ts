@@ -13,7 +13,7 @@ const sentryDsn = import.meta.env.VITE_SENTRY_DSN?.trim();
 // first-party callers that hit the same hosts directly (e.g.
 // `MapContainer.fetchAndApplyRadar` → `api.rainviewer.com`). The set IS the
 // safety: only known third-party hosts are suppressed; first-party fetches
-// to `api.worldmonitor.app` and the self-hosted R2 PMTiles bucket are NOT
+// to `api.ajnav.com` and the self-hosted R2 PMTiles bucket are NOT
 // in the set, so genuine basemap / API regressions still surface.
 const THIRD_PARTY_FETCH_HOST_ALLOWLIST = new Set([
   'tilecache.rainviewer.com',
@@ -27,12 +27,12 @@ const THIRD_PARTY_FETCH_HOST_ALLOWLIST = new Set([
 Sentry.init({
   dsn: sentryDsn || undefined,
   release: `worldmonitor@${__APP_VERSION__}`,
-  environment: (location.hostname === 'worldmonitor.app' || location.hostname.endsWith('.worldmonitor.app')) ? 'production'
+  environment: (location.hostname === 'ajnav.com' || location.hostname.endsWith('.ajnav.com')) ? 'production'
     : location.hostname.includes('vercel.app') ? 'preview'
     : 'development',
   enabled: Boolean(sentryDsn) && !location.hostname.startsWith('localhost') && !('__TAURI_INTERNALS__' in window),
   allowUrls: [
-    /https?:\/\/(www\.|tech\.|finance\.|commodity\.|happy\.)?worldmonitor\.app/,
+    /https?:\/\/(www\.|tech\.|finance\.|commodity\.|happy\.)?ajnav\.com/,
     /https?:\/\/.*\.vercel\.app/,
   ],
   sendDefaultPii: true,
@@ -341,7 +341,7 @@ Sentry.init({
     // `MapContainer.fetchAndApplyRadar` hitting `api.rainviewer.com`. The
     // host-allowlist set is the load-bearing safety: only known third-party
     // hosts get suppressed; first-party fetch failures (self-hosted R2 PMTiles
-    // bucket, `api.worldmonitor.app`) are intentionally NOT in the set so a
+    // bucket, `api.ajnav.com`) are intentionally NOT in the set so a
     // real basemap / API regression is never silently dropped
     // (WORLDMONITOR-NE/NF, WORLDMONITOR-QG).
     if (isHostScopedFetchFailure) {
@@ -630,15 +630,15 @@ function shouldSuppressCspViolation(
   // ships no http:// subresource loads, and every fetch directive we DO use
   // (connect-src, img-src, script-src, media-src) is set explicitly, so a genuine
   // first-party mixed-content fetch surfaces under its specific directive — never
-  // this default-src fallback. Preserve first-party worldmonitor.app http blocks
+  // this default-src fallback. Preserve first-party ajnav.com http blocks
   // so a real mixed-content regression on our own assets still surfaces
   // (WORLDMONITOR-S0 — http://www.euronews.com article prefetch, 1 user/775 ev).
   if (directive === 'default-src') {
     try {
       const u = new URL(blockedURI);
       if (u.protocol === 'http:'
-          && u.hostname !== 'worldmonitor.app'
-          && !u.hostname.endsWith('.worldmonitor.app')) return true;
+          && u.hostname !== 'ajnav.com'
+          && !u.hostname.endsWith('.ajnav.com')) return true;
     } catch { /* scheme-only values fall through */ }
   }
   // First-party Convex backend: corporate proxies / privacy extensions that mutate the
@@ -659,13 +659,13 @@ function shouldSuppressCspViolation(
   // CloudSOC, school content-filters) can strip both `'self'` and `https:` from img-src
   // in the user's effective policy, causing our own favicon and panel icons to be
   // CSP-blocked even though our policy (`img-src 'self' data: blob: https:`) allows
-  // them. Scope to `worldmonitor.app` and its subdomains — img-src blocks to foreign
+  // them. Scope to `ajnav.com` and its subdomains — img-src blocks to foreign
   // hosts (a third-party CDN we never load, attacker-controlled host) still surface
   // (WORLDMONITOR-JP). Suffix check uses a leading `.` so lookalikes like
-  // `worldmonitor.app.evil.com` do NOT match.
+  // `ajnav.com.evil.com` do NOT match.
   //
   // REQUIRE https: protocol — our CSP only allows https: for img-src, so a real
-  // mixed-content regression (`<img src="http://worldmonitor.app/...">`) would be
+  // mixed-content regression (`<img src="http://ajnav.com/...">`) would be
   // blocked by the browser. Suppressing http: blocks on first-party hosts would mask
   // that regression in Sentry. The `cspConnectSrcAllowsHttps` block above uses the
   // same protocol gate for connect-src.
@@ -673,7 +673,7 @@ function shouldSuppressCspViolation(
     try {
       const url = new URL(blockedURI);
       if (url.protocol === 'https:'
-          && (url.hostname === 'worldmonitor.app' || url.hostname.endsWith('.worldmonitor.app'))) return true;
+          && (url.hostname === 'ajnav.com' || url.hostname.endsWith('.ajnav.com'))) return true;
     } catch { /* scheme-only values fall through */ }
   }
   // YouTube IFrame API loader: explicitly allowed by our script-src
@@ -724,7 +724,7 @@ function shouldSuppressCspViolation(
   // us-atlas TopoJSON, chart.js in widget-sanitizer iframe), but never
   // CSS — so a `style-src*` block on jsDelivr is by definition third-party
   // injection (WORLDMONITOR-J0 — antd@4 CSS injection, 270 events / 26
-  // users on finance.worldmonitor.app).
+  // users on finance.ajnav.com).
   if (/^style-src(-elem)?$/.test(directive) && /^https:\/\/cdn\.jsdelivr\.net\//.test(blockedURI)) return true;
   // Inline script blocks from extensions/in-app browsers.
   if (blockedURI === 'inline' && directive === 'script-src-elem') return true;
@@ -826,7 +826,7 @@ initMetaTags();
 
 // In desktop mode, route /api/* calls to the local Tauri sidecar backend.
 installRuntimeFetchPatch();
-// In web production, route RPC calls through api.worldmonitor.app (Cloudflare edge).
+// In web production, route RPC calls through api.ajnav.com (Cloudflare edge).
 installWebApiRedirect();
 // Force-reload tabs running a stale bundle (catches the class of bug where
 // users keep a tab open across a wire-shape change). Skips when build-hash

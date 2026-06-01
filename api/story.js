@@ -16,7 +16,7 @@ const COUNTRY_NAMES = {
 const BOT_UA = /twitterbot|facebookexternalhit|linkedinbot|slackbot|telegrambot|whatsapp|discordbot|redditbot|googlebot/i;
 
 export default function handler(req, res) {
-  const url = new URL(req.url, 'https://worldmonitor.app');
+  const url = new URL(req.url, 'https://ajnav.com');
   const countryCode = (url.searchParams.get('c') || '').toUpperCase();
   const type = url.searchParams.get('t') || 'ciianalysis';
   const ts = url.searchParams.get('ts') || '';
@@ -26,7 +26,7 @@ export default function handler(req, res) {
   const ua = req.headers['user-agent'] || '';
   const isBot = BOT_UA.test(ua);
 
-  const baseUrl = 'https://worldmonitor.app';
+  const baseUrl = 'https://ajnav.com';
   const spaUrl = `${baseUrl}/?c=${countryCode}&t=${type}${ts ? `&ts=${ts}` : ''}`;
 
   // Real users → redirect to SPA
@@ -38,7 +38,7 @@ export default function handler(req, res) {
 
   // Bots → serve meta tags
   const countryName = COUNTRY_NAMES[countryCode] || countryCode || 'Global';
-  const title = `${countryName} Intelligence Brief | World Monitor`;
+  const title = `${countryName} Intelligence Brief | Chanakya Dashboard`;
   const description = `Real-time instability analysis for ${countryName}. Country Instability Index, military posture, threat classification, and prediction markets. Free, open-source geopolitical intelligence.`;
   const imageParams = `c=${countryCode}&t=${type}${score ? `&s=${score}` : ''}${level ? `&l=${level}` : ''}`;
   const imageUrl = `${baseUrl}/api/og-story?${imageParams}`;
@@ -58,10 +58,10 @@ export default function handler(req, res) {
   <meta property="og:image:width" content="1200"/>
   <meta property="og:image:height" content="630"/>
   <meta property="og:url" content="${esc(storyUrl)}"/>
-  <meta property="og:site_name" content="World Monitor"/>
+  <meta property="og:site_name" content="Chanakya Dashboard"/>
 
   <meta name="twitter:card" content="summary_large_image"/>
-  <meta name="twitter:site" content="@WorldMonitorApp"/>
+  <meta name="twitter:site" content="@AjnavLabs"/>
   <meta name="twitter:title" content="${esc(title)}"/>
   <meta name="twitter:description" content="${esc(description)}"/>
   <meta name="twitter:image" content="${esc(imageUrl)}"/>

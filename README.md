@@ -2,12 +2,12 @@
 
 **Real-time global intelligence dashboard** — AI-powered news aggregation, geopolitical monitoring, and infrastructure tracking in a unified situational awareness interface.
 
-[![GitHub stars](https://img.shields.io/github/stars/koala73/worldmonitor?style=social)](https://github.com/koala73/worldmonitor/stargazers)
+[![GitHub stars](https://img.shields.io/github/stars/dast-santhosh/chanakya?style=social)](https://github.com/dast-santhosh/chanakya/stargazers)
 [![Discord](https://img.shields.io/badge/Discord-Join-5865F2?style=flat&logo=discord&logoColor=white)](https://discord.gg/re63kWKxaz)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Last commit](https://img.shields.io/github/last-commit/koala73/worldmonitor)](https://github.com/koala73/worldmonitor/commits/main)
-[![Latest release](https://img.shields.io/github/v/release/koala73/worldmonitor?style=flat)](https://github.com/koala73/worldmonitor/releases/latest)
+[![Last commit](https://img.shields.io/github/last-commit/dast-santhosh/chanakya)](https://github.com/dast-santhosh/chanakya/commits/main)
+[![Latest release](https://img.shields.io/github/v/release/dast-santhosh/chanakya?style=flat)](https://github.com/dast-santhosh/chanakya/releases/latest)
 
 <p align="center">
   <a href="https://worldmonitor.app"><img src="https://img.shields.io/badge/Web_App-worldmonitor.app-blue?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Web App"></a>&nbsp;
@@ -27,7 +27,7 @@
 
 <p align="center">
   <a href="https://www.worldmonitor.app/docs/documentation"><strong>Documentation</strong></a> &nbsp;·&nbsp;
-  <a href="https://github.com/koala73/worldmonitor/releases/latest"><strong>Releases</strong></a> &nbsp;·&nbsp;
+  <a href="https://github.com/dast-santhosh/chanakya/releases/latest"><strong>Releases</strong></a> &nbsp;·&nbsp;
   <a href="https://www.worldmonitor.app/docs/contributing"><strong>Contributing</strong></a>
 </p>
 
@@ -60,15 +60,15 @@ All site variants and desktop binaries are built from a single codebase and ship
 | `worldmonitor.app`, `tech.`, `finance.`, `commodity.`, `happy.`, `energy.` | Stable | Public deployments built from this repo, actively maintained |
 | Desktop binaries (Windows / macOS Apple Silicon / macOS Intel / Linux AppImage) | Stable | One Tauri binary that switches variants in-app; current CI release targets are `full` and `tech` |
 
-Issues filed against any of the above are triaged from the same backlog — see the [issues board](https://github.com/koala73/worldmonitor/issues) for currently-open work.
+Issues filed against any of the above are triaged from the same backlog — see the [issues board](https://github.com/dast-santhosh/chanakya/issues) for currently-open work.
 
 ---
 
 ## Quick Start
 
 ```bash
-git clone https://github.com/koala73/worldmonitor.git
-cd worldmonitor
+git clone https://github.com/dast-santhosh/chanakya.git
+cd chanakya
 npm install
 npm run dev
 ```
@@ -142,19 +142,13 @@ npm run build:full       # Production build
 
 See [LICENSE](LICENSE) for the full code license and [docs/license.mdx](docs/license.mdx) for a plain-language summary. Commercial licensing is available as an alternative option for teams that need non-AGPL terms.
 
-Copyright (C) 2024-2026 Elie Habib. All rights reserved.
+Copyright (C) 2024-2026 Ajnav Labs. All rights reserved.
 
 ---
 
 ## Author
 
-**Elie Habib** — [GitHub](https://github.com/koala73)
-
-## Contributors
-
-<a href="https://github.com/koala73/worldmonitor/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=koala73/worldmonitor" />
-</a>
+**Ajnav Labs** — [ajnav.com](https://ajnav.com)
 
 ## Security Acknowledgments
 
@@ -175,9 +169,9 @@ See our [Security Policy](./SECURITY.md) for responsible disclosure guidelines.
 
 ## Star History
 
-<a href="https://api.star-history.com/svg?repos=koala73/worldmonitor&type=Date">
+<a href="https://api.star-history.com/svg?repos=dast-santhosh/chanakya&type=Date">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=koala73/worldmonitor&type=Date&type=Date&theme=dark" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=koala73/worldmonitor&type=Date&type=Date" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=dast-santhosh/chanakya&type=Date&type=Date&theme=dark" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=dast-santhosh/chanakya&type=Date&type=Date" />
  </picture>
 </a>

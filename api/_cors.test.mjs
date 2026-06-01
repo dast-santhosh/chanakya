@@ -7,7 +7,7 @@ function makeRequest(origin) {
   if (origin !== null) {
     headers.set('origin', origin);
   }
-  return new Request('https://worldmonitor.app/api/test', { headers });
+  return new Request('https://ajnav.com/api/test', { headers });
 }
 
 test('allows desktop Tauri origins', () => {
@@ -32,7 +32,7 @@ test('rejects unrelated external origins', () => {
   const req = makeRequest('https://evil.example.com');
   assert.equal(isDisallowedOrigin(req), true);
   const cors = getCorsHeaders(req);
-  assert.equal(cors['Access-Control-Allow-Origin'], 'https://worldmonitor.app');
+  assert.equal(cors['Access-Control-Allow-Origin'], 'https://ajnav.com');
   assert.equal(cors['Access-Control-Allow-Credentials'], 'true');
 });
 

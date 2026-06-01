@@ -58,16 +58,16 @@ function sanitizeData(data: ExportData): ExportData {
   };
 }
 
-export function exportToJSON(data: ExportData, filename = 'worldmonitor-export'): void {
+export function exportToJSON(data: ExportData, filename = 'chanakya-export'): void {
   const jsonStr = JSON.stringify(sanitizeData(data), null, 2);
   downloadFile(jsonStr, `${filename}.json`, 'application/json');
 }
 
-export function exportToCSV(data: ExportData, filename = 'worldmonitor-export'): void {
+export function exportToCSV(data: ExportData, filename = 'chanakya-export'): void {
   const clean = sanitizeData(data);
   const lines: string[] = [];
 
-  lines.push(`# WorldMonitor Export — ${new Date(clean.timestamp).toISOString()}`);
+  lines.push(`# Chanakya Dashboard Export — ${new Date(clean.timestamp).toISOString()}`);
   lines.push('# Note: CSV is a structured summary. Use JSON export for full fidelity.');
   if (clean.meta?.note) lines.push(`# ${clean.meta.note}`);
   lines.push('');
@@ -361,7 +361,9 @@ export class ExportPanel {
     this.element = document.createElement('div');
     this.element.className = 'export-panel-container';
     setTrustedHtml(this.element, trustedHtml(`
-      <button class="export-btn" title="${t('common.exportData')}">⬇</button>
+      <button class="export-btn" title="${t('common.exportData')}">
+        <svg class="lucide lucide-download" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+      </button>
       <div class="export-menu hidden">
         <button class="export-option" data-format="csv">${t('common.exportCsv')}</button>
         <button class="export-option" data-format="json">${t('common.exportJson')}</button>
@@ -400,7 +402,7 @@ export class ExportPanel {
   private export(format: ExportFormat): void {
     const data = this.getData();
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const filename = `worldmonitor-${timestamp}`;
+    const filename = `chanakya-${timestamp}`;
 
     if (format === 'json') {
       exportToJSON(data, filename);

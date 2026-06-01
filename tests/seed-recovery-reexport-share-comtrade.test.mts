@@ -163,8 +163,9 @@ describe('credential-leak regression guard', () => {
     // to a URL builder, this test fails before it leaks to prod Redis.
     const { readFile } = await import('node:fs/promises');
     const { fileURLToPath } = await import('node:url');
+    const path = await import('node:path');
     const here = fileURLToPath(import.meta.url);
-    const seederPath = here.replace(/\/tests\/.*$/, '/scripts/seed-recovery-reexport-share.mjs');
+    const seederPath = path.join(path.dirname(here), '..', 'scripts', 'seed-recovery-reexport-share.mjs');
     const src = await readFile(seederPath, 'utf8');
     // Flag only string-literal embeddings inside '...', "...", or `...`;
     // regex literals (/subscription-key=/i used by the defensive serialize

@@ -20,12 +20,12 @@ const __filename = fileURLToPath(import.meta.url);
 const ROOT = resolve(dirname(__filename), '..');
 const SKILLS_DIR = resolve(ROOT, 'public/.well-known/agent-skills');
 const INDEX_PATH = join(SKILLS_DIR, 'index.json');
-const PUBLIC_BASE = 'https://worldmonitor.app';
+const PUBLIC_BASE = 'https://ajnav.com';
 
 const SCHEMA = 'https://agentskills.io/schemas/v0.2.0/index.json';
 // Closing fence must be anchored to its own line so values that happen to
 // start with `---` in the body can't prematurely terminate frontmatter.
-const FRONTMATTER_RE = /^---\n([\s\S]*?)\n---(?:\n|$)/;
+const FRONTMATTER_RE = /^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/;
 
 function sha256Hex(bytes) {
   return createHash('sha256').update(bytes).digest('hex');
@@ -101,6 +101,6 @@ function main() {
   process.stdout.write(`Wrote ${INDEX_PATH}\n`);
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && resolve(process.argv[1]) === resolve(fileURLToPath(import.meta.url))) {
   main();
 }
